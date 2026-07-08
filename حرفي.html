@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>حرفي دزاير</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; -webkit-tap-highlight-color:transparent; }
+:root { --gold:#e8b038; --gold2:#f5cd6b; --ink:#0a0a0c; --ink2:#101014; --ink3:#17171d; --line:#26262e; --mut:#8a8a96; --txt:#eceadf; --red:#e5484d; }
+html { scroll-behavior:smooth; }
+body { background:var(--ink); color:var(--txt); overflow-x:hidden; }
+svg { vertical-align:middle; flex-shrink:0; }
+::-webkit-scrollbar { width:9px; } ::-webkit-scrollbar-thumb { background:#2c2c36; border-radius:9px; }
+
+body::before {
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(rgba(232,176,56,.045) 1px, transparent 1px),linear-gradient(90deg, rgba(232,176,56,.045) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 40%, #000 30%, transparent 90%);
+}
+body::after { content:""; position:fixed; inset:0; z-index:0; pointer-events:none; background:radial-gradient(ellipse at 50% 120%, rgba(232,176,56,.06), transparent 55%); }
+
+.page { display:none; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* ============ قائمة الكليك يمين ============ */
+#ctxMenu {
+  position:fixed; z-index:500; min-width:190px; padding:8px;
+  background:rgba(42,42,50,.55); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.12); border-radius:18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+  opacity:0; transform:scale(.92) translateY(-6px); pointer-events:none;
+  transition:opacity .22s ease, transform .22s cubic-bezier(.16,1,.3,1);
+}
+#ctxMenu.open { opacity:1; transform:none; pointer-events:auto; }
+.ctx-item { display:flex; align-items:center; gap:11px; padding:11px 15px; border-radius:12px; cursor:pointer; color:#d9d7cc; font-size:.92rem; transition:all .22s; }
+.ctx-item.danger { color:#f0888c; }
+.ctx-sep { height:1px; background:rgba(255,255,255,.1); margin:6px 10px; }
+
+/* ============ شريط التنقل ============ */
+.top-nav { position:fixed; top:0; right:0; left:0; z-index:80; display:flex; align-items:center; gap:32px; padding:20px 40px; }
+.nav-link { position:relative; color:var(--txt); font-size:.93rem; cursor:pointer; background:none; border:none; padding:4px 2px; }
+.nav-link::after { content:""; position:absolute; bottom:-4px; right:0; height:2px; width:0; background:var(--gold); border-radius:2px; transition:width .45s cubic-bezier(.4,0,.2,1); }
+.lang-wrap { margin-right:auto; position:relative; }
+.lang-btn { width:42px; height:42px; border-radius:50%; background:var(--ink2); border:1px solid var(--line); color:var(--gold2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color .3s, transform .3s; }
+.lang-menu { position:absolute; top:52px; left:0; background:var(--ink2); border:1px solid var(--line); border-radius:18px; padding:8px; min-width:150px; opacity:0; transform:translateY(-12px) scale(.94); pointer-events:none; transition:all .35s cubic-bezier(.16,1,.3,1); box-shadow:0 18px 50px rgba(0,0,0,.5); }
+.lang-menu.open { opacity:1; transform:none; pointer-events:auto; }
+.lang-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; cursor:pointer; color:var(--mut); font-size:.92rem; transition:all .25s; }
+.lang-item.active { color:var(--gold2); }
+.lang-item .dot { width:6px; height:6px; border-radius:50%; background:var(--gold); opacity:0; }
+.lang-item.active .dot { opacity:1; }
+
+/* ============ الرسم الذاتي ============ */
+.draw path, .draw circle, .draw line, .draw rect, .draw polyline {
+  fill:none; stroke:var(--gold); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1; stroke-dashoffset:1;
+}
+.in .draw path, .in .draw circle, .in .draw line, .in .draw rect, .in .draw polyline {
+  animation:drawLine 1.3s cubic-bezier(.4,0,.2,1) forwards; animation-delay:var(--d,0s);
+}
+.in .draw.fast path, .in .draw.fast circle, .in .draw.fast line, .in .draw.fast rect { animation-duration:.65s; }
+@keyframes drawLine { to{ stroke-dashoffset:0; } }
+.draw .thin { stroke-width:1.2; stroke:rgba(232,176,56,.5); }
+.draw .white { stroke:var(--txt); }
+
+.rule { display:flex; align-items:center; gap:14px; justify-content:center; margin:22px auto; }
+.rule .l { height:1px; background:var(--gold); width:0; transition:width 1s cubic-bezier(.4,0,.2,1) var(--d,.2s); border-radius:2px; }
+.in .rule .l { width:min(120px,22vw); }
+.rule .diamond { width:8px; height:8px; background:var(--gold); border-radius:2px; transform:rotate(45deg) scale(0); transition:transform .5s var(--d,.2s); }
+.in .rule .diamond { transform:rotate(45deg) scale(1); }
+
+.tw { min-height:1.4em; }
+.tw .caret { display:inline-block; width:2px; height:1em; background:var(--gold); vertical-align:-.12em; margin-right:2px; animation:blink .75s infinite; border-radius:2px; }
+@keyframes blink { 50%{opacity:0} }
+.gold { color:var(--gold); text-shadow:0 0 40px rgba(232,176,56,.35); }
+.rise { opacity:0; transform:translateY(50px); transition:all .9s cubic-bezier(.16,1,.3,1) var(--d,0s); }
+.in .rise { opacity:1; transform:none; }
+
+/* ============ المقاطع ============ */
+.fp { min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:30px 22px; position:relative; overflow:hidden; }
+.sec-inner { display:flex; flex-direction:column; align-items:center; text-align:center; width:100%; transition:transform 1.1s cubic-bezier(.4,0,.2,1), opacity 1.1s ease, filter 1.1s ease; }
+.fp:not(.in):not(.out) .sec-inner { opacity:0; transform:translateY(70px); filter:blur(8px); }
+.fp.in .sec-inner { opacity:1; transform:none; filter:none; }
+.fp.out .sec-inner { opacity:0; transform:translateY(-110px) scale(.97); filter:blur(16px); }
+
+/* المقطع 1: ترحيب نظيف بدون رسومات */
+#heroSec .sec-inner { padding-top:20px; }
+.h-kicker { font-size:.82rem; color:var(--mut); margin-bottom:16px; }
+h1.h-title { font-size:clamp(2.7rem,7.5vw,5rem); font-weight:800; line-height:1.25; }
+.h-sub { color:var(--mut); font-size:clamp(.95rem,2.1vw,1.15rem); max-width:620px; line-height:2.1; margin-top:6px; }
+.h-dev { margin-top:18px; font-size:.88rem; color:#5c5c66; }
+.h-dev b { color:var(--gold2); font-weight:600; }
+
+.scroll-arrow { position:absolute; bottom:22px; left:50%; transform:translateX(-50%); width:36px; height:50px; cursor:pointer; z-index:7; }
+.scroll-arrow span { position:absolute; left:50%; width:14px; height:14px; border-left:2px solid var(--gold); border-bottom:2px solid var(--gold); transform:translateX(-50%) rotate(-45deg); animation:af 1.9s infinite; }
+.scroll-arrow span:nth-child(2){ top:13px; animation-delay:.25s } .scroll-arrow span:nth-child(3){ top:26px; animation-delay:.5s }
+@keyframes af { 0%{opacity:0; transform:translateX(-50%) rotate(-45deg) translate(5px,-5px)} 50%{opacity:1} 100%{opacity:0; transform:translateX(-50%) rotate(-45deg) translate(-5px,5px)} }
+
+/* المقطع 2 */
+.duo { display:flex; align-items:center; justify-content:center; gap:min(70px,6vw); max-width:1080px; width:100%; flex-wrap:wrap; }
+.duo .art { width:min(430px,88vw); }
+.duo .copy { max-width:440px; text-align:right; }
+.sec-kicker { color:var(--gold); font-size:.8rem; margin-bottom:14px; }
+.copy h2, .center-copy h2 { font-size:clamp(1.7rem,3.6vw,2.5rem); line-height:1.6; margin-bottom:6px; }
+.copy .body-txt, .center-copy .body-txt { color:var(--mut); line-height:2.2; font-size:.98rem; margin-top:14px; }
+.copy .rule { justify-content:flex-start; margin:14px 0; }
+.sig-list { margin-top:20px; }
+.sig-item { display:flex; align-items:baseline; gap:12px; padding:9px 0; color:var(--txt); font-size:.95rem; opacity:0; transform:translateX(30px); transition:all .8s cubic-bezier(.16,1,.3,1) var(--d,0s); }
+.in .sig-item { opacity:1; transform:none; }
+.sig-item .tick { color:var(--gold); font-weight:bold; }
+.sig-item small { color:var(--mut); }
+
+/* المقطع 3 */
+.center-copy { max-width:640px; }
+.journey { width:min(860px,94vw); margin-top:34px; }
+.j-labels { display:flex; justify-content:space-between; width:min(820px,92vw); margin:6px auto 0; }
+.j-label { width:33%; opacity:0; transform:translateY(24px); transition:all .8s cubic-bezier(.16,1,.3,1) var(--d,0s); }
+.in .j-label { opacity:1; transform:none; }
+.j-label b { display:block; font-size:1rem; margin-bottom:5px; color:var(--gold2); }
+.j-label span { color:var(--mut); font-size:.84rem; line-height:1.8; display:block; }
+
+/* المقطع 4: النجوم + إحصائيات حقيقية + زر بسيط */
+.big-stars { width:min(500px,86vw); margin:10px 0 6px; }
+.big-stars .fill-star { fill:transparent; }
+@keyframes starFill { 0%{fill:transparent} 55%{fill:rgba(245,205,107,1); filter:drop-shadow(0 0 18px rgba(232,176,56,.9))} 100%{fill:rgba(232,176,56,.92); filter:drop-shadow(0 0 8px rgba(232,176,56,.45))} }
+.in .big-stars .st1 { animation:drawLine 1s .2s forwards, starFill .9s 1.2s forwards; }
+.in .big-stars .st2 { animation:drawLine 1s .4s forwards, starFill .9s 1.5s forwards; }
+.in .big-stars .st3 { animation:drawLine 1s .6s forwards, starFill .9s 1.8s forwards; }
+.in .big-stars .st4 { animation:drawLine 1s .8s forwards, starFill .9s 2.1s forwards; }
+.in .big-stars .st5 { animation:drawLine 1s 1s forwards, starFill .9s 2.4s forwards; }
+.stats { display:flex; gap:min(64px,7vw); flex-wrap:wrap; justify-content:center; margin:30px 0 8px; }
+.stat-box { min-width:110px; }
+.stat-box .num { font-size:2.7rem; font-weight:800; color:var(--txt); }
+.stat-box .lbl { color:var(--mut); font-size:.85rem; margin-top:4px; }
+.mini-footer { position:absolute; bottom:16px; width:100%; text-align:center; color:#4c4c56; font-size:.8rem; }
+.mini-footer b { color:var(--gold); }
+
+/* زر البدء: بسيط وأنيق، خط واحد يرسم نفسه */
+.btn-start { position:relative; display:inline-block; margin-top:32px; cursor:pointer; background:none; border:none; border-radius:50px; }
+.btn-start .lbl { position:relative; z-index:2; display:block; padding:17px 60px; color:var(--gold2); font-size:1.1rem; font-weight:bold; transition:color .35s; }
+.btn-start svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+.btn-start rect { fill:none; stroke:var(--gold); stroke-width:2; stroke-dasharray:1; stroke-dashoffset:1; }
+.in .btn-start rect { animation:drawLine 1.4s 2.4s forwards; }
+.in .btn-start .lbl { animation:btnGlow 3s 4s ease-in-out infinite; }
+@keyframes btnGlow { 0%,100%{text-shadow:0 0 6px rgba(232,176,56,.15)} 50%{text-shadow:0 0 20px rgba(232,176,56,.6)} }
+.btn-start::before { content:""; position:absolute; inset:0; background:var(--gold); border-radius:50px; transform:scaleX(0); transform-origin:right; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+
+/* ============ تسجيل الدخول ============ */
+#loginPage.active { display:flex; min-height:100vh; }
+.login-split { display:flex; width:100%; min-height:100vh; }
+.login-brand { flex:1; display:flex; flex-direction:column; justify-content:center; padding:60px 58px; position:relative; overflow:hidden; background:var(--ink); border-left:1px solid var(--line); }
+.login-brand .mini-emblem { width:110px; margin-bottom:26px; }
+.login-brand h2 { font-size:clamp(1.7rem,3vw,2.4rem); line-height:1.7; }
+.login-brand h2 span { color:var(--gold); }
+.login-brand .brand-sub { color:var(--mut); line-height:2.1; max-width:430px; margin-top:16px; font-size:.96rem; }
+.b-line-list { margin-top:30px; }
+.b-line { display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid var(--line); color:var(--txt); font-size:.94rem; opacity:0; transform:translateX(40px); transition:all .8s cubic-bezier(.16,1,.3,1) var(--d,0s); }
+.login-brand.in .b-line { opacity:1; transform:none; }
+.b-line .n { color:var(--gold); font-weight:800; font-size:1.05rem; min-width:26px; }
+.b-line small { display:block; color:var(--mut); font-size:.8rem; margin-top:2px; }
+.login-side { flex:1; background:var(--ink2); display:flex; justify-content:center; align-items:center; padding:40px 24px; position:relative; overflow:hidden; }
+
+/* رسومات الأدوات: واضحة وفي خانات محجوزة لا تتراكب */
+.sketch-layer { position:absolute; inset:0; pointer-events:none; z-index:1; }
+.sketch { position:absolute; animation:sketchLife var(--life,6.5s) ease forwards; }
+.sketch path, .sketch circle, .sketch rect, .sketch line, .sketch ellipse {
+  fill:none; stroke:rgba(232,176,56,.55); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1; stroke-dashoffset:1;
+  animation:drawLine 1.3s cubic-bezier(.4,0,.2,1) forwards; animation-delay:var(--d,0s);
+}
+.sketch .fill-hint { fill:rgba(232,176,56,.08); stroke:rgba(232,176,56,.55); }
+@keyframes sketchLife {
+  0% { opacity:0; transform:scale(.92) rotate(var(--rot,0deg)); }
+  8% { opacity:1; }
+  75% { opacity:1; filter:none; }
+  100% { opacity:0; filter:blur(7px); transform:scale(1.03) rotate(var(--rot,0deg)); }
+}
+.login-card { width:100%; max-width:430px; border:1px solid var(--line); border-radius:26px; background:var(--ink); padding:52px 44px; position:relative; z-index:2; animation:cardUp .9s .2s cubic-bezier(.16,1,.3,1) both; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+.login-card::before, .login-card::after { content:""; position:absolute; width:30px; height:30px; border:2px solid var(--gold); }
+.login-card::before { top:-2px; right:-2px; border-left:none; border-bottom:none; border-top-right-radius:26px; }
+.login-card::after { bottom:-2px; left:-2px; border-right:none; border-top:none; border-bottom-left-radius:26px; }
+@keyframes cardUp { from{opacity:0; transform:translateY(60px)} to{opacity:1; transform:none} }
+.login-card h3 { font-size:1.5rem; margin-bottom:6px; }
+.login-card .sub { color:var(--mut); margin-bottom:30px; font-size:.92rem; }
+.field { margin-bottom:22px; }
+.field label { display:block; color:var(--gold); font-size:.8rem; margin-bottom:8px; }
+.field input { width:100%; background:none; border:none; border-bottom:1.5px solid var(--line); padding:10px 2px; font-size:1.05rem; color:var(--txt); outline:none; transition:border-color .3s; }
+.field input:focus { border-color:var(--gold); }
+.field input::placeholder { color:#4c4c56; }
+.btn-solid { width:100%; background:var(--gold); color:#111; border:none; border-radius:14px; padding:15px; font-size:1.02rem; font-weight:bold; cursor:pointer; margin-top:8px; transition:background .3s, transform .2s; }
+.btn-solid:disabled { opacity:.6; cursor:wait; }
+.login-note { color:#5c5c66; font-size:.78rem; margin-top:18px; line-height:1.9; text-align:center; }
+.back-link { display:block; text-align:center; margin-top:12px; color:var(--mut); font-size:.85rem; cursor:pointer; text-decoration:underline; }
+.error-msg { color:var(--red); font-size:.85rem; margin-bottom:12px; display:none; }
+
+/* ============ التطبيق ============ */
+#appPage.active { display:flex; flex-direction:column; height:100vh; overflow:hidden; background:var(--ink); }
+header.app-header { background:var(--ink); padding:13px 22px; display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--line); flex-shrink:0; flex-wrap:wrap; }
+.app-header .logo { display:flex; align-items:center; gap:9px; font-weight:bold; font-size:1.08rem; white-space:nowrap; }
+.app-header .logo b { color:var(--gold); }
+.search-wrap { flex:1; max-width:500px; min-width:150px; position:relative; }
+.search-wrap input { width:100%; padding:11px 42px 11px 16px; border-radius:50px; background:var(--ink3); border:1px solid var(--line); color:var(--txt); font-size:.92rem; outline:none; transition:border-color .3s; }
+.search-wrap input:focus { border-color:var(--gold); }
+.search-wrap input::placeholder { color:#5c5c66; }
+.search-wrap .s-icon { position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#5c5c66; }
+.btn-add { display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:#111; border:none; border-radius:50px; padding:11px 24px; font-weight:bold; cursor:pointer; font-size:.88rem; white-space:nowrap; transition:background .3s; margin-right:auto; }
+.app-layout { display:flex; flex-direction:row-reverse; flex:1; min-height:0; }
+aside.sidebar { width:248px; flex-shrink:0; background:var(--ink); display:flex; flex-direction:column; padding:18px 16px 0; border-right:1px solid var(--line); }
+.sidebar h4 { display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--gold); margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+.side-scroll { flex:1; overflow-y:auto; padding-bottom:8px; }
+.side-cat { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; cursor:pointer; margin-bottom:3px; color:var(--mut); font-size:.9rem; transition:all .25s; border:1px solid transparent; }
+.side-cat .right { display:flex; align-items:center; gap:10px; }
+.side-cat.active { color:var(--gold2); border-color:rgba(232,176,56,.5); background:var(--ink3); }
+.side-cat .count { color:#5c5c66; font-size:.75rem; }
+.side-cat.active .count { color:var(--gold); }
+.side-profile { border-top:1px solid var(--line); padding:15px 4px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-shrink:0; }
+.sp-right { display:flex; align-items:center; gap:11px; min-width:0; }
+.sp-avatar { width:40px; height:40px; border-radius:13px; flex-shrink:0; background:var(--gold); color:#111; font-weight:bold; display:flex; align-items:center; justify-content:center; }
+.sp-right b { display:block; font-size:.87rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sp-right small { color:var(--mut); font-size:.72rem; }
+.logout-link { color:var(--red); font-size:.87rem; cursor:pointer; white-space:nowrap; background:none; border:none; border-bottom:2px solid var(--red); padding:0 0 2px; transition:opacity .3s; }
+main.content { flex:1; min-width:0; overflow-y:auto; padding:22px 24px 40px; }
+.content-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.content-title { font-size:1.15rem; }
+.content-sub { color:var(--mut); font-size:.83rem; margin-top:4px; }
+.chip-mine { display:inline-flex; align-items:center; gap:7px; background:none; border:1px solid var(--line); border-radius:50px; padding:8px 20px; cursor:pointer; font-size:.85rem; color:var(--mut); transition:all .25s; }
+.chip-mine.on { color:var(--gold2); border-color:var(--gold); }
+.offers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.offer-card { background:var(--ink2); border-radius:18px; padding:22px; cursor:pointer; border:1px solid var(--line); transition:border-color .35s, transform .35s; animation:cardUp .5s ease both; position:relative; }
+.card-top { display:flex; align-items:center; gap:11px; margin-bottom:13px; }
+.card-avatar { width:42px; height:42px; border-radius:13px; color:#fff; font-weight:bold; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.card-top .who b { display:block; font-size:.92rem; }
+.card-rate { display:inline-flex; align-items:center; gap:4px; color:var(--gold2); font-size:.76rem; }
+.cat-tag { position:absolute; top:18px; left:18px; color:var(--gold); border:1px solid rgba(232,176,56,.4); border-radius:50px; padding:3px 13px; font-size:.7rem; }
+.offer-card h3 { margin-bottom:7px; font-size:1rem; }
+.offer-card .desc { color:var(--mut); font-size:.86rem; line-height:1.8; margin-bottom:12px; }
+.offer-card .meta { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:11px; font-size:.82rem; }
+.offer-card .price { color:var(--gold2); font-weight:bold; }
+.offer-card .ago { color:#5c5c66; font-size:.77rem; }
+.card-actions { display:flex; gap:8px; margin-top:12px; }
+.btn-getnum { flex:1; display:flex; justify-content:center; align-items:center; gap:8px; background:none; color:var(--gold2); border:1px solid var(--gold); border-radius:12px; padding:11px; font-size:.88rem; cursor:pointer; transition:all .3s; }
+.btn-del { display:flex; align-items:center; background:none; color:var(--red); border:1px solid rgba(229,72,77,.4); border-radius:12px; padding:10px 13px; cursor:pointer; }
+.empty-state { text-align:center; color:var(--mut); padding:60px 20px; grid-column:1/-1; line-height:2; }
+
+/* ============ البروفايل ============ */
+#profileOverlay { position:fixed; inset:0; z-index:150; background:var(--ink); transform:translateY(100%); opacity:0; visibility:hidden; overflow-y:auto; transition:transform .55s cubic-bezier(.16,1,.3,1), opacity .4s, visibility .55s; }
+#profileOverlay.open { transform:none; opacity:1; visibility:visible; }
+.doc { max-width:680px; margin:0 auto; padding:34px 26px 90px; }
+.doc-back { display:inline-flex; align-items:center; gap:8px; color:var(--mut); background:none; border:none; font-size:.9rem; cursor:pointer; margin-bottom:44px; transition:color .3s; }
+.doc-name { font-size:clamp(2rem,5vw,2.9rem); font-weight:800; min-height:1.3em; }
+.doc-craft { color:var(--gold); font-size:.88rem; margin-top:10px; opacity:0; transition:opacity .8s .3s; }
+#profileOverlay.open .doc-craft { opacity:1; }
+.doc-rule { height:1px; background:var(--gold); border-radius:2px; width:0; margin:30px 0; transition:width 1.3s cubic-bezier(.4,0,.2,1) .3s; }
+#profileOverlay.open .doc-rule { width:100%; }
+.doc-rule.half { transition-delay:.6s; }
+.doc-row { display:flex; align-items:baseline; gap:20px; padding:13px 0; opacity:0; transform:translateY(20px); transition:all .8s cubic-bezier(.16,1,.3,1) var(--d,.4s); }
+#profileOverlay.open .doc-row { opacity:1; transform:none; }
+.doc-label { color:var(--gold); font-size:.8rem; min-width:96px; }
+.doc-value { font-size:1rem; line-height:2; color:var(--txt); flex:1; }
+.doc-value.big { font-size:1.15rem; }
+.doc-stars { display:inline-flex; gap:3px; margin-left:10px; }
+.doc-stars svg { color:#33333d; } .doc-stars svg.on { color:var(--gold); }
+.doc-desc { color:#c9c7bc; line-height:2.3; font-size:.98rem; }
+.num-line { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+.link-btn { background:none; border:none; color:var(--gold2); font-size:.95rem; cursor:pointer; border-bottom:1.5px solid var(--gold); padding:0 0 3px; transition:opacity .3s; display:inline-flex; align-items:center; gap:8px; }
+.the-number { font-size:1.5rem; font-weight:bold; letter-spacing:4px; direction:ltr; color:var(--txt); display:none; animation:cardUp .5s both; }
+.the-number.show { display:inline-block; }
+.call-plain { color:var(--gold2); text-decoration:none; border-bottom:1.5px solid var(--gold); padding-bottom:3px; font-size:.92rem; display:none; }
+.call-plain.show { display:inline-flex; align-items:center; gap:7px; animation:cardUp .5s .1s both; }
+.rate-stars { display:inline-flex; gap:8px; }
+.rate-stars svg { cursor:pointer; color:#33333d; transition:transform .2s, color .2s; }
+.rate-stars svg.sel { color:var(--gold); animation:punch .4s ease; }
+@keyframes punch { 0%{transform:scale(.6)} 60%{transform:scale(1.4)} 100%{transform:scale(1)} }
+.self-note { color:var(--mut); font-size:.9rem; }
+.review-line { display:flex; align-items:baseline; gap:16px; padding:15px 0; border-bottom:1px solid var(--line); animation:cardUp .5s ease both; }
+.review-line:last-child { border-bottom:none; }
+.rv-name { font-size:.93rem; min-width:120px; }
+.rv-stars { display:inline-flex; gap:2px; }
+.rv-stars svg { color:#33333d; } .rv-stars svg.on { color:var(--gold); }
+.rv-time { color:#5c5c66; font-size:.76rem; margin-right:auto; }
+.no-reviews { color:var(--mut); padding:14px 0; font-size:.9rem; }
+
+#toast { position:fixed; bottom:28px; right:50%; transform:translate(50%,100px); background:var(--ink3); color:var(--txt); padding:13px 30px; border:1px solid var(--gold); border-radius:14px; font-size:.9rem; z-index:300; opacity:0; transition:all .45s cubic-bezier(.16,1,.3,1); max-width:90vw; text-align:center; }
+#toast.show { transform:translate(50%,0); opacity:1; }
+
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,7,.85); justify-content:center; align-items:center; z-index:200; padding:20px; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--ink2); border:1px solid var(--line); border-radius:24px; padding:36px; width:100%; max-width:460px; animation:cardUp .4s both; max-height:90vh; overflow-y:auto; position:relative; }
+.modal::before { content:""; position:absolute; top:-2px; right:-2px; width:28px; height:28px; border-top:2px solid var(--gold); border-right:2px solid var(--gold); border-top-right-radius:24px; }
+.modal h3 { color:var(--gold2); margin-bottom:24px; }
+.modal input, .modal select, .modal textarea { width:100%; padding:12px 4px; margin-bottom:18px; font-size:.97rem; outline:none; background:none; border:none; border-bottom:1.5px solid var(--line); color:var(--txt); transition:border-color .3s; }
+.modal input:focus, .modal select:focus, .modal textarea:focus { border-color:var(--gold); }
+.modal input::placeholder, .modal textarea::placeholder { color:#4c4c56; }
+.modal select option { background:var(--ink2); }
+.btn-cancel { width:100%; background:none; color:var(--mut); border:1px solid var(--line); border-radius:14px; padding:12px; margin-top:8px; cursor:pointer; font-size:.92rem; }
+
+/* ============================================================
+   تأثيرات الماوس: للكمبيوتر فقط
+============================================================ */
+@media (hover:hover) and (pointer:fine) {
+  .nav-link:hover { color:var(--gold2); } .nav-link:hover::after { width:100%; }
+  .lang-btn:hover { border-color:var(--gold); transform:scale(1.08); }
+  .lang-item:hover { background:var(--ink3); color:var(--txt); }
+  .ctx-item:hover { background:rgba(232,176,56,.18); color:var(--gold2); }
+  .ctx-item.danger:hover { background:rgba(229,72,77,.18); color:#ff9599; }
+  .btn-start:hover::before { transform:scaleX(1); }
+  .btn-start:hover .lbl { color:#111; animation:none; }
+  .btn-solid:hover { background:var(--gold2); transform:translateY(-2px); }
+  .back-link:hover, .doc-back:hover { color:var(--gold); }
+  .btn-add:hover { background:var(--gold2); }
+  .side-cat:hover { color:var(--txt); background:var(--ink3); transform:translateX(-4px); }
+  .offer-card:hover { border-color:var(--gold); transform:translateY(-5px); }
+  .btn-getnum:hover { background:var(--gold); color:#111; }
+  .btn-del:hover { background:rgba(229,72,77,.12); }
+  .link-btn:hover { opacity:.7; }
+  .logout-link:hover { opacity:.65; }
+  .rate-stars svg:hover { transform:scale(1.25); }
+}
+/* ============================================================
+   أنميشن اللمس: للهاتف فقط
+============================================================ */
+@media (hover:none) {
+  .btn-start:active, .btn-solid:active, .btn-add:active, .btn-getnum:active,
+  .chip-mine:active, .offer-card:active, .side-cat:active, .ctx-item:active,
+  .link-btn:active, .lang-btn:active, .nav-link:active, .doc-back:active { transform:scale(.95); transition:transform .15s; }
+  .nav-link:active { color:var(--gold2); }
+  .btn-getnum:active { background:var(--gold); color:#111; }
+}
+/* ============================================================
+   تخطيط الهاتف: مريح وغير متلاصق
+============================================================ */
+body.is-mobile .top-nav { padding:14px 16px; gap:16px; overflow-x:auto; }
+body.is-mobile .nav-link { font-size:.85rem; white-space:nowrap; }
+body.is-mobile .fp { padding:24px 18px; }
+body.is-mobile h1.h-title { font-size:2.5rem; }
+body.is-mobile .h-sub { font-size:.95rem; padding:0 6px; }
+body.is-mobile .duo { gap:34px; }
+body.is-mobile .duo .copy { text-align:center; }
+body.is-mobile .copy .rule { justify-content:center; }
+body.is-mobile .j-labels { flex-direction:column; gap:22px; align-items:center; }
+body.is-mobile .j-label { width:100%; max-width:340px; }
+body.is-mobile .stats { gap:28px; }
+body.is-mobile .login-split { flex-direction:column; }
+body.is-mobile .login-brand { border-left:none; border-bottom:1px solid var(--line); padding:44px 24px 30px; align-items:center; text-align:center; }
+body.is-mobile .login-side { padding:34px 18px 50px; }
+body.is-mobile .login-card { padding:40px 28px; }
+body.is-mobile .app-header { padding:12px 14px; gap:10px; }
+body.is-mobile .search-wrap { order:3; max-width:100%; flex-basis:100%; }
+body.is-mobile .btn-add .txt { display:none; }
+body.is-mobile .app-layout { flex-direction:column; }
+body.is-mobile aside.sidebar { width:100%; padding:10px 14px 0; }
+body.is-mobile .sidebar h4 { display:none; }
+body.is-mobile .side-scroll { display:flex; gap:8px; overflow-x:auto; overflow-y:hidden; padding-bottom:10px; }
+body.is-mobile .side-cat { white-space:nowrap; padding:10px 16px; }
+body.is-mobile main.content { padding:18px 16px 60px; }
+body.is-mobile .offers-grid { grid-template-columns:1fr; gap:18px; }
+body.is-mobile .offer-card { padding:20px 18px; }
+body.is-mobile .doc { padding:26px 18px 80px; }
+body.is-mobile .doc-row { flex-direction:column; gap:8px; }
+body.is-mobile .doc-label { min-width:auto; }
+body.is-mobile .num-line { gap:14px; }
+body.is-mobile .review-line { flex-wrap:wrap; gap:10px; }
+body.is-mobile .rv-time { margin-right:0; width:100%; }
+body.is-mobile .modal { padding:28px 22px; }
+</style>
+</head>
+<!-- الجزء الثاني (HTML) يُلصق هنا -->
+<body>
+<div id="toast"></div>
+
+<!-- قائمة الكليك يمين -->
+<div id="ctxMenu">
+  <div class="ctx-item" onclick="ctxAdd()"><span id="ic-cx1"></span><span data-i="ctx_add">إضافة عرض</span></div>
+  <div class="ctx-item" onclick="ctxSearch()"><span id="ic-cx2"></span><span data-i="ctx_search">البحث</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="ctxLogout()"><span id="ic-cx3"></span><span data-i="ctx_logout">تسجيل خروج</span></div>
+</div>
+
+<!-- ==================== الواجهة الأولى ==================== -->
+<div id="landingPage" class="page active">
+
+  <nav class="top-nav" id="topNav">
+    <button class="nav-link" data-i="nav_about" onclick="fpGo(1)">من نحن</button>
+    <button class="nav-link" data-i="nav_how" onclick="fpGo(2)">كيف يمكنني الدخول</button>
+    <button class="nav-link" data-i="nav_steps" onclick="fpGo(3)">خطوات الدخول</button>
+    <div class="lang-wrap">
+      <button class="lang-btn" id="langBtn" onclick="toggleLangMenu(event)"><span id="ic-globe"></span></button>
+      <div class="lang-menu" id="langMenu">
+        <div class="lang-item" data-lang="ar" onclick="setLang('ar')"><span class="dot"></span> العربية</div>
+        <div class="lang-item" data-lang="en" onclick="setLang('en')"><span class="dot"></span> English</div>
+        <div class="lang-item" data-lang="fr" onclick="setLang('fr')"><span class="dot"></span> Français</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- المقطع 1: ترحيب نظيف، بدون أي رسومات وبدون زر -->
+  <section class="fp" id="heroSec">
+    <div class="sec-inner">
+      <div class="h-kicker rise" style="--d:.2s" data-i="kicker">منصة الصنعة الجزائرية</div>
+      <h1 class="h-title tw" id="twTitle"></h1>
+      <div class="rule" style="--d:1s"><div class="l"></div><div class="diamond"></div><div class="l"></div></div>
+      <p class="h-sub tw" id="twSub"></p>
+      <div class="h-dev rise" style="--d:2s"><span data-i="dev_prefix">فكرة وتطوير</span> &nbsp;<b>أنس بن صايبي</b></div>
+    </div>
+    <div class="scroll-arrow" onclick="fpGo(1)"><span></span><span></span><span></span></div>
+  </section>
+
+  <!-- المقطع 2: الورشة -->
+  <section class="fp">
+    <div class="sec-inner">
+      <div class="duo">
+        <svg class="art draw fast" viewBox="0 0 400 300">
+          <path pathLength="1" style="--d:.1s" d="M20 260 H380"/>
+          <path pathLength="1" style="--d:.3s" d="M70 260 V140 L200 60 L330 140 V260"/>
+          <path pathLength="1" class="thin" style="--d:.55s" d="M70 140 H330"/>
+          <path pathLength="1" style="--d:.7s" d="M175 260 V180 H225 V260"/>
+          <path pathLength="1" class="thin" style="--d:.85s" d="M215 222 a3 3 0 1 1 -6 0 a3 3 0 0 1 6 0"/>
+          <path pathLength="1" style="--d:.95s" d="M95 170 h55 v50 h-55 z M122 170 v50 M95 195 h55"/>
+          <path pathLength="1" style="--d:1.1s" d="M245 165 h70 v34 h-70 z"/>
+          <path pathLength="1" class="white thin" style="--d:1.25s" d="M255 182 h50"/>
+          <path pathLength="1" style="--d:1.35s" d="M345 260 L365 150 M368 260 L388 150 M350 235 h20 M354 210 h20 M358 185 h20"/>
+          <path pathLength="1" style="--d:1.55s" d="M40 260 L58 215 M50 210 l14 -6 6 13 -14 6z"/>
+          <path pathLength="1" style="--d:1.7s" d="M255 100 V70 h20 v42"/>
+          <path pathLength="1" class="thin" style="--d:1.85s" d="M262 60 q8 -8 0 -16 q-8 -8 2 -14"/>
+        </svg>
+        <div class="copy">
+          <div class="sec-kicker rise" style="--d:.2s" data-i="k2">الحرفة قصة</div>
+          <h2 class="tw" id="twS2"></h2>
+          <div class="rule" style="--d:.8s"><div class="l"></div><div class="diamond"></div></div>
+          <p class="body-txt rise" style="--d:1s" data-i="body2">ورشتك ما عادها محدودة بحيّك. عرضك يوصل لآلاف الناس في كل الولايات، واسمك يكبر مع كل خدمة ناجحة. بلا وسيط، بلا عمولة، أرباحك كاملة ليك.</p>
+          <div class="sig-list">
+            <div class="sig-item" style="--d:1.3s"><span class="tick">/</span> <span data-i="sig1">دخول باسمك ورقمك فقط</span> <small data-i="sig1s">- في ثوانٍ</small></div>
+            <div class="sig-item" style="--d:1.5s"><span class="tick">/</span> <span data-i="sig2">عرضك ظاهر على مدار الساعة</span> <small data-i="sig2s">- حتى وأنت تخدم</small></div>
+            <div class="sig-item" style="--d:1.7s"><span class="tick">/</span> <span data-i="sig3">الزبون يتصل بيك مباشرة</span> <small data-i="sig3s">- بلا وسيط</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- المقطع 3: خط الرحلة -->
+  <section class="fp">
+    <div class="sec-inner">
+      <div class="center-copy">
+        <div class="sec-kicker rise" style="--d:.1s" data-i="k3">من العرض إلى المكالمة</div>
+        <h2 class="tw" id="twS3"></h2>
+        <div class="rule" style="--d:.7s"><div class="l"></div><div class="diamond"></div><div class="l"></div></div>
+      </div>
+      <svg class="journey draw fast" viewBox="0 0 860 130">
+        <path pathLength="1" style="--d:.4s" d="M40 65 H820"/>
+        <circle pathLength="1" style="--d:.8s" cx="140" cy="65" r="34"/>
+        <circle pathLength="1" style="--d:1.1s" cx="430" cy="65" r="34"/>
+        <circle pathLength="1" style="--d:1.4s" cx="720" cy="65" r="34"/>
+        <path pathLength="1" class="white" style="--d:1s" d="M128 50 h16 l8 8 v22 h-24z M132 66 h16 M132 73 h12"/>
+        <path pathLength="1" class="white" style="--d:1.3s" d="M430 48 l5 11 12 1 -9 8 3 12 -11 -6 -11 6 3 -12 -9 -8 12 -1z"/>
+        <path pathLength="1" class="white" style="--d:1.6s" d="M710 52 h14 v28 h-14z M715 74 h4"/>
+        <path pathLength="1" class="thin" style="--d:1.8s" d="M732 56 q6 9 0 18 M739 51 q10 14 0 28"/>
+      </svg>
+      <div class="j-labels">
+        <div class="j-label" style="--d:1.2s"><b data-i="j1t">انشر عرضك</b><span data-i="j1d">عنوان ووصف وسعر، يظهر فوراً في قسم حرفتك</span></div>
+        <div class="j-label" style="--d:1.5s"><b data-i="j2t">اجمع التقييمات</b><span data-i="j2d">كل زبون راضي يرفعك بخمس نجوم في الترتيب</span></div>
+        <div class="j-label" style="--d:1.8s"><b data-i="j3t">استقبل المكالمات</b><span data-i="j3d">الزبون ياخد رقمك من بروفايلك ويتصل مباشرة</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- المقطع 4: النجوم + أرقام حقيقية + زر بسيط -->
+  <section class="fp">
+    <div class="sec-inner">
+      <div class="center-copy">
+        <div class="sec-kicker rise" style="--d:.1s" data-i="k4">الأفضل يتصدر</div>
+        <h2 class="tw" id="twS4"></h2>
+      </div>
+      <svg class="big-stars draw" viewBox="0 0 500 100">
+        <path pathLength="1" class="st1 fill-star" d="M50 18 l9 19 21 2 -16 14 5 21 -19 -11 -19 11 5 -21 -16 -14 21 -2z"/>
+        <path pathLength="1" class="st2 fill-star" d="M150 18 l9 19 21 2 -16 14 5 21 -19 -11 -19 11 5 -21 -16 -14 21 -2z"/>
+        <path pathLength="1" class="st3 fill-star" d="M250 18 l9 19 21 2 -16 14 5 21 -19 -11 -19 11 5 -21 -16 -14 21 -2z"/>
+        <path pathLength="1" class="st4 fill-star" d="M350 18 l9 19 21 2 -16 14 5 21 -19 -11 -19 11 5 -21 -16 -14 21 -2z"/>
+        <path pathLength="1" class="st5 fill-star" d="M450 18 l9 19 21 2 -16 14 5 21 -19 -11 -19 11 5 -21 -16 -14 21 -2z"/>
+      </svg>
+      <p class="body-txt rise" style="--d:1.4s; max-width:540px" data-i="body4">الحرفي اللي يجمع خمس نجوم أكثر، بروفايله وعروضه يطلعو في أول الصفحة تلقائياً. جودة شغلك هي اللي ترفعك.</p>
+      <!-- أرقام حقيقية تُحسب من البيانات الفعلية -->
+      <div class="stats">
+        <div class="stat-box rise" style="--d:1.6s"><div class="num" id="statCrafts">0</div><div class="lbl" data-i="stat1">حرفي مسجل</div></div>
+        <div class="stat-box rise" style="--d:1.8s"><div class="num" id="statOffers">0</div><div class="lbl" data-i="stat2">عرض منشور</div></div>
+        <div class="stat-box rise" style="--d:2s"><div class="num" id="statRatings">0</div><div class="lbl" data-i="stat3">تقييم موثق</div></div>
+      </div>
+      <!-- زر بسيط: خط واحد يرسم نفسه -->
+      <button class="btn-start" onclick="goLogin()">
+        <span class="lbl" data-i="btn_start">ابدأ الآن مجاناً</span>
+        <svg preserveAspectRatio="none" viewBox="0 0 100 100"><rect x="1.5" y="1.5" width="97" height="97" rx="49" pathLength="1"/></svg>
+      </button>
+    </div>
+    <div class="mini-footer">2026 <span data-i="footer_name">حرفي دزاير</span> - <span data-i="footer_by">صُنع بواسطة</span> <b>أنس بن صايبي</b></div>
+  </section>
+</div>
+
+<!-- ==================== تسجيل الدخول ==================== -->
+<div id="loginPage" class="page">
+  <div class="login-split">
+    <div class="login-brand in" id="loginBrand">
+      <svg class="mini-emblem draw" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="112" pathLength="1" style="--d:.2s"/>
+        <path pathLength="1" style="--d:.6s" d="M85 155 L128 112"/>
+        <path pathLength="1" style="--d:.8s" d="M120 96 l22 -14 l16 16 -14 22 -24 -24z"/>
+        <path pathLength="1" style="--d:1s" d="M155 155 L112 112"/>
+        <path pathLength="1" style="--d:1.2s" d="M96 96 a16 16 0 1 1 8 8 l8 8 -8 8 -8 -8 a16 16 0 0 1 0 -16z"/>
+      </svg>
+      <h2 id="loginH2"></h2>
+      <p class="brand-sub" data-i="l_sub">انضم للحرفيين اللي يستقبلو مكالمات الزبائن كل يوم من المنصة.</p>
+      <div class="b-line-list">
+        <div class="b-line" style="--d:.5s"><span class="n">01</span><div><span data-i="l_n1t">بياناتك في أمان</span><small data-i="l_n1d">اسمك ورقمك فقط، لا نطلب أي معلومة أخرى</small></div></div>
+        <div class="b-line" style="--d:.7s"><span class="n">02</span><div><span data-i="l_n2t">دخول فوري</span><small data-i="l_n2d">بدون تأكيد بريد أو رمز تحقق</small></div></div>
+        <div class="b-line" style="--d:.9s"><span class="n">03</span><div><span data-i="l_n3t">مجاني للأبد</span><small data-i="l_n3d">لا اشتراكات ولا رسوم خفية</small></div></div>
+      </div>
+    </div>
+    <div class="login-side">
+      <div class="sketch-layer" id="sketchLayer"></div>
+      <div class="login-card">
+        <h3 data-i="l_welcome">مرحباً بك</h3>
+        <p class="sub" data-i="l_enterinfo">أدخل معلوماتك وابدأ فوراً</p>
+        <div class="field"><label data-i="l_name">الاسم الكامل</label><input type="text" id="nameInput" data-ph="ph_name" placeholder="اكتب الاسم" maxlength="40" autocomplete="name"></div>
+        <div class="field"><label data-i="l_phone">رقم الهاتف</label><input type="tel" id="phoneInput" data-ph="ph_phone" placeholder="اكتب رقم الهاتف" maxlength="10" inputmode="numeric" autocomplete="tel"></div>
+        <div class="error-msg" id="loginError"></div>
+        <button class="btn-solid" id="loginBtn" data-i="btn_enter" onclick="login()">دخول</button>
+        <div class="login-note" data-i="l_note">بالدخول أنت توافق على عرض اسمك ورقمك مع عروضك المنشورة فقط، وهو الرقم الذي سيتصل عليه الزبائن</div>
+        <span class="back-link" data-i="l_back" onclick="showPage('landingPage')">رجوع للصفحة الرئيسية</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== التطبيق ==================== -->
+<div id="appPage" class="page">
+  <header class="app-header">
+    <div class="logo"><span id="ic-hlogo"></span> <span data-i="brand1">حرفي</span> <b data-i="brand2">دزاير</b></div>
+    <div class="search-wrap"><span class="s-icon" id="ic-search"></span><input type="text" id="searchInput" data-ph="search_ph" placeholder="ابحث عن خدمة، حرفي، أو عرض..." maxlength="60" oninput="renderOffers()"></div>
+    <button class="btn-add" onclick="openModal()"><span id="ic-plus1"></span><span class="txt" data-i="add_offer">أضف عرضاً</span></button>
+  </header>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <h4><span id="ic-side"></span> <span data-i="side_title">جميع الحرف</span></h4>
+      <div class="side-scroll" id="sideCats"></div>
+      <div class="side-profile">
+        <div class="sp-right"><div class="sp-avatar" id="spAvatar"></div><div style="min-width:0"><b id="spName"></b><small id="spPhone"></small></div></div>
+        <button class="logout-link" data-i="logout" onclick="logout()">خروج</button>
+      </div>
+    </aside>
+    <main class="content">
+      <div class="content-head">
+        <div><h2 class="content-title" id="contentTitle"></h2><p class="content-sub" id="contentSub"></p></div>
+        <button class="chip-mine" id="mineChip" onclick="toggleMine()"><span id="ic-mine"></span> <span data-i="mine_only">عروضي فقط</span></button>
+      </div>
+      <div class="offers-grid" id="offersGrid"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ==================== البروفايل ==================== -->
+<div id="profileOverlay">
+  <div class="doc">
+    <button class="doc-back" onclick="closeProfile()"><span id="ic-back"></span> <span data-i="p_back">رجوع للعروض</span></button>
+    <div class="doc-name tw" id="docName"></div>
+    <div class="doc-craft" id="docCraft"></div>
+    <div class="doc-rule"></div>
+    <div class="doc-row" style="--d:.5s"><span class="doc-label" data-i="p_rating">التقييم</span><span class="doc-value" id="docRating"></span></div>
+    <div class="doc-row" style="--d:.65s"><span class="doc-label" data-i="p_offer">العرض</span><span class="doc-value big" id="docOfferTitle"></span></div>
+    <div class="doc-row" style="--d:.8s"><span class="doc-label" data-i="p_price">السعر</span><span class="doc-value" id="docPrice"></span></div>
+    <div class="doc-row" style="--d:.95s"><span class="doc-label" data-i="p_about">نبذة</span><span class="doc-value doc-desc" id="docDesc"></span></div>
+    <div class="doc-row" style="--d:1.1s">
+      <span class="doc-label" data-i="p_phone">الهاتف</span>
+      <span class="doc-value num-line">
+        <button class="link-btn" id="revealBtn" onclick="revealNumber()"><span id="ic-ph2"></span> <span data-i="p_get">الحصول على الرقم</span></button>
+        <span class="the-number" id="theNumber"></span>
+        <a class="call-plain" id="callLink"><span id="ic-ph3"></span> <span data-i="p_call">اتصال مباشر</span></a>
+      </span>
+    </div>
+    <div class="doc-rule half"></div>
+    <div class="doc-row" style="--d:1.3s">
+      <span class="doc-label" data-i="p_rate">قيّمه</span>
+      <span class="doc-value">
+        <span id="rateZone" class="num-line">
+          <span class="rate-stars" id="rateStars"></span>
+          <button class="link-btn" data-i="p_send" onclick="submitRating()">إرسال التقييم</button>
+        </span>
+        <span class="self-note" id="selfNote" style="display:none"></span>
+      </span>
+    </div>
+    <div class="doc-row" style="--d:1.45s; display:block">
+      <span class="doc-label" style="display:block; margin-bottom:8px" data-i="p_raters">من قيّمه</span>
+      <div id="reviewsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== نافذة إضافة عرض ==================== -->
+<div class="modal-overlay" id="offerModal"><div class="modal">
+  <h3 data-i="m_title">انشر عرضك الجديد</h3>
+  <input type="text" id="offerTitle" data-ph="m_ph_title" placeholder="عنوان العرض" maxlength="60">
+  <select id="offerCat"></select>
+  <textarea id="offerDesc" rows="3" data-ph="m_ph_desc" placeholder="وصف الخدمة وفائدتها للزبون..." maxlength="250"></textarea>
+  <input type="text" id="offerPrice" data-ph="m_ph_price" placeholder="السعر (مثال: 5000 دج أو حسب الاتفاق)" maxlength="30">
+  <div class="error-msg" id="offerError"></div>
+  <button class="btn-solid" id="publishBtn" data-i="m_publish" onclick="addOffer()">نشر العرض</button>
+  <button class="btn-cancel" data-i="m_cancel" onclick="closeModal()">إلغاء</button>
+</div></div>
+
+<!-- الجزء الثالث (JavaScript) يُلصق هنا -->
+<script>
+/* ================= الأيقونات ================= */
+const I={logo:'<path d="M14.7 6.3a4.5 4.5 0 0 0-5.9 5.9L3 18v3h3l5.8-5.8a4.5 4.5 0 0 0 5.9-5.9l-2.9 2.9-2.5-.5-.5-2.5 2.9-2.9z"/>',search:'<circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>',phone:'<path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2z"/>',star:'<path d="M12 2l3 6.5 7 .8-5.2 4.7 1.4 6.9L12 17.5 5.8 21l1.4-6.9L2 9.3l7-.8z"/>',trash:'<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/>',plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',back:'<path d="M9 6l6 6-6 6"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',wood:'<rect x="3" y="8" width="18" height="8" rx="1"/><path d="M8 8v8M13 8v8M18 8v8"/>',bolt:'<path d="M13 2L4 14h6l-1 8 9-12h-6z"/>',drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',brick:'<rect x="3" y="5" width="18" height="14"/><path d="M3 12h18M9 5v7M15 12v7"/>',scissors:'<circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 12M8 16L20 4"/>',hammer:'<path d="M14 4l6 6-2.2 2.2-6-6z"/><path d="M11.5 6.5L3 15l3 3 8.5-8.5"/>',roller:'<rect x="4" y="4" width="12" height="5" rx="1"/><path d="M16 6h4v5h-8v3"/><rect x="11" y="14" width="2" height="7"/>',mobile:'<rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/>',snow:'<line x1="12" y1="2" x2="12" y2="22"/><line x1="3.3" y1="7" x2="20.7" y2="17"/><line x1="20.7" y1="7" x2="3.3" y2="17"/>',car:'<path d="M5 16l1.6-5h10.8L19 16"/><rect x="3" y="16" width="18" height="4" rx="1"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',exit:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><line x1="21" y1="12" x2="9" y2="12"/>'};
+function ic(n,s=20,f=false){return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${f?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;}
+const put=(id,n,s,f)=>{const el=document.getElementById(id);if(el)el.innerHTML=ic(n,s,f);};
+put("ic-globe","globe",19);put("ic-hlogo","logo",22,true);put("ic-search","search",18);
+put("ic-plus1","plus",16);put("ic-side","grid",16);put("ic-mine","star",14,true);
+put("ic-back","back",16);put("ic-ph2","phone",16);put("ic-ph3","phone",15);
+put("ic-cx1","plus",16);put("ic-cx2","search",16);put("ic-cx3","exit",16);
+
+/* ================= الترجمة ================= */
+const DICT={
+ar:{nav_about:"من نحن",nav_how:"كيف يمكنني الدخول",nav_steps:"خطوات الدخول",kicker:"منصة الصنعة الجزائرية",dev_prefix:"فكرة وتطوير",btn_start:"ابدأ الآن مجاناً",
+k2:"الحرفة قصة",body2:"ورشتك ما عادها محدودة بحيّك. عرضك يوصل لآلاف الناس في كل الولايات، واسمك يكبر مع كل خدمة ناجحة. بلا وسيط، بلا عمولة، أرباحك كاملة ليك.",
+sig1:"دخول باسمك ورقمك فقط",sig1s:"- في ثوانٍ",sig2:"عرضك ظاهر على مدار الساعة",sig2s:"- حتى وأنت تخدم",sig3:"الزبون يتصل بيك مباشرة",sig3s:"- بلا وسيط",
+k3:"من العرض إلى المكالمة",j1t:"انشر عرضك",j1d:"عنوان ووصف وسعر، يظهر فوراً في قسم حرفتك",j2t:"اجمع التقييمات",j2d:"كل زبون راضي يرفعك بخمس نجوم في الترتيب",j3t:"استقبل المكالمات",j3d:"الزبون ياخد رقمك من بروفايلك ويتصل مباشرة",
+k4:"الأفضل يتصدر",body4:"الحرفي اللي يجمع خمس نجوم أكثر، بروفايله وعروضه يطلعو في أول الصفحة تلقائياً. جودة شغلك هي اللي ترفعك.",
+stat1:"حرفي مسجل",stat2:"عرض منشور",stat3:"ولاية مغطاة",footer_name:"حرفي دزاير",footer_by:"صُنع بواسطة",
+l_sub:"انضم لمئات الحرفيين اللي ولّاو يستقبلو مكالمات الزبائن كل يوم من المنصة.",l_n1t:"بياناتك في أمان",l_n1d:"اسمك ورقمك فقط، لا نطلب أي معلومة أخرى",l_n2t:"دخول فوري",l_n2d:"بدون تأكيد بريد أو رمز تحقق",l_n3t:"مجاني للأبد",l_n3d:"لا اشتراكات ولا رسوم خفية",
+l_welcome:"مرحباً بك",l_enterinfo:"أدخل معلوماتك وابدأ فوراً",l_name:"الاسم الكامل",l_phone:"رقم الهاتف",btn_enter:"دخول",l_note:"بالدخول أنت توافق على عرض اسمك ورقمك مع عروضك المنشورة فقط، وهو الرقم الذي سيتصل عليه الزبائن",l_back:"رجوع للصفحة الرئيسية",
+brand1:"حرفي",brand2:"دزاير",add_offer:"أضف عرضاً",side_title:"جميع الحرف",logout:"خروج",mine_only:"عروضي فقط",
+p_back:"رجوع للعروض",p_rating:"التقييم",p_offer:"العرض",p_price:"السعر",p_about:"نبذة",p_phone:"الهاتف",p_get:"الحصول على الرقم",p_call:"اتصال مباشر",p_rate:"قيّمه",p_send:"إرسال التقييم",p_raters:"من قيّمه",
+m_title:"انشر عرضك الجديد",m_publish:"نشر العرض",m_cancel:"إلغاء",
+ph_name:"اكتب الاسم",ph_phone:"اكتب رقم الهاتف",search_ph:"ابحث عن خدمة، حرفي، أو عرض...",m_ph_title:"عنوان العرض",m_ph_desc:"وصف الخدمة وفائدتها للزبون...",m_ph_price:"السعر (مثال: 5000 دج أو حسب الاتفاق)",
+ctx_add:"إضافة عرض",ctx_search:"البحث",ctx_logout:"تسجيل خروج",
+loginH2:'خطوة وحدة تفصلك<br>على <span>زبائن جدد</span>',
+all_offers:"كل العروض",my_offers:"عروضي",results:"نتائج البحث",cat_p:"قسم",offers_count:"عرض - الأعلى تقييماً يظهر أولاً",no_offers:"لا توجد عروض مطابقة.<br>جرب بحثاً آخر أو كن أول من ينشر.",
+no_rating:"بدون تقييم",craft_p:"حرفة",no_rate_yet:"لا توجد تقييمات بعد - كن أول من يقيّم",of5:"من 5",ratings_w:"تقييم",five_w:"خمس نجوم",no_reviews:"لا توجد تقييمات بعد",you:"(أنت)",
+choose_cat:"اختر القسم...",err_name:"أدخل اسماً صحيحاً (3 أحرف على الأقل)",err_phone:"أدخل رقم هاتف جزائري صحيح (يبدأ بـ 05/06/07)",fill_all:"املأ العنوان والقسم والوصف بشكل كامل",
+del_c:"هل تريد حذف هذا العرض؟",deleted:"تم حذف العرض",published:"تم نشر عرضك بنجاح",welcome:"مرحباً بك يا ",thanks:"شكراً، تم تسجيل تقييمك بـ ",stars_w:" نجوم",pick:"اختر عدد النجوم أولاً",
+already:"لقد قيّمت هذا الحرفي مسبقاً - تقييم واحد لكل شخص",selfr:"لا يمكنك تقييم نفسك",bye:"تم تسجيل الخروج",
+now:"الآن",ago_m:"منذ # دقيقة",ago_h:"منذ # ساعة",ago_d:"منذ # يوم",old:"قديم",
+twTitle:[{t:"مرحباً بك في"},{br:1},{t:"حرفي دزاير",c:"gold"}],twSub:"هنا تلتقي الصنعة بأصحابها. حرفيون من كل ولايات الجزائر يعرضون خدماتهم، والزبائن يوصلولهم مباشرة.",
+twS2:"شغلك يستاهل يوصل أبعد",twS3:"ثلاث خطوات والهاتف يرن",twS4:"جودة شغلك هي اللي ترفعك"},
+en:{nav_about:"About us",nav_how:"How to join",nav_steps:"Login steps",kicker:"The Algerian craftsmanship platform",dev_prefix:"Created by",btn_start:"Start now for free",
+k2:"Craft is a story",body2:"Your workshop is no longer limited to your neighborhood. Your offer reaches thousands across all wilayas. No middleman, no commission.",
+sig1:"Login with name and phone only",sig1s:"- in seconds",sig2:"Your offer visible 24/7",sig2s:"- even while you work",sig3:"Clients call you directly",sig3s:"- no middleman",
+k3:"From offer to phone call",j1t:"Publish your offer",j1d:"Title, description and price, visible instantly",j2t:"Collect ratings",j2d:"Every happy client lifts you with five stars",j3t:"Receive calls",j3d:"Clients get your number and call directly",
+k4:"The best rise to the top",body4:"Craftsmen with more five-star ratings automatically appear first. Your quality lifts you up.",
+stat1:"Registered craftsmen",stat2:"Published offers",stat3:"Wilayas covered",footer_name:"Herfi Dzair",footer_by:"Made by",
+l_sub:"Join hundreds of craftsmen receiving client calls every day.",l_n1t:"Your data is safe",l_n1d:"Only your name and number",l_n2t:"Instant access",l_n2d:"No email or codes",l_n3t:"Free forever",l_n3d:"No subscriptions, no hidden fees",
+l_welcome:"Welcome",l_enterinfo:"Enter your info and start now",l_name:"Full name",l_phone:"Phone number",btn_enter:"Enter",l_note:"Your name and number will be shown with your offers only - this is the number clients will call",l_back:"Back to home",
+brand1:"Herfi",brand2:"Dzair",add_offer:"Add offer",side_title:"All crafts",logout:"Logout",mine_only:"My offers only",
+p_back:"Back to offers",p_rating:"RATING",p_offer:"OFFER",p_price:"PRICE",p_about:"ABOUT",p_phone:"PHONE",p_get:"Get the number",p_call:"Call now",p_rate:"RATE",p_send:"Submit rating",p_raters:"RATED BY",
+m_title:"Publish your new offer",m_publish:"Publish",m_cancel:"Cancel",
+ph_name:"Type your name",ph_phone:"Type your phone number",search_ph:"Search for a service, craftsman or offer...",m_ph_title:"Offer title",m_ph_desc:"Describe your service...",m_ph_price:"Price (e.g. 5000 DZD or negotiable)",
+ctx_add:"Add offer",ctx_search:"Search",ctx_logout:"Logout",
+loginH2:'One step away from<br><span>new clients</span>',
+all_offers:"All offers",my_offers:"My offers",results:"Search results",cat_p:"Section",offers_count:"offers - highest rated first",no_offers:"No matching offers.<br>Try another search.",
+no_rating:"No rating",craft_p:"Craft",no_rate_yet:"No ratings yet - be the first",of5:"of 5",ratings_w:"ratings",five_w:"five stars",no_reviews:"No ratings yet",you:"(you)",
+choose_cat:"Choose section...",err_name:"Enter a valid name (min 3 chars)",err_phone:"Enter a valid Algerian number (05/06/07)",fill_all:"Fill title, section and description",
+del_c:"Delete this offer?",deleted:"Offer deleted",published:"Offer published",welcome:"Welcome ",thanks:"Thanks, your rating of ",stars_w:" stars was saved",pick:"Pick stars first",
+already:"You already rated this craftsman - one rating per person",selfr:"You cannot rate yourself",bye:"Logged out",
+now:"now",ago_m:"# min ago",ago_h:"# h ago",ago_d:"# d ago",old:"old",
+twTitle:[{t:"Welcome to"},{br:1},{t:"Herfi Dzair",c:"gold"}],twSub:"Where craft meets its people. Craftsmen from every wilaya showcase their services, and clients reach them directly.",
+twS2:"Your work deserves to reach further",twS3:"Three steps and the phone rings",twS4:"Your quality lifts you up"},
+fr:{nav_about:"Qui sommes-nous",nav_how:"Comment entrer",nav_steps:"Etapes de connexion",kicker:"La plateforme artisanale algerienne",dev_prefix:"Cree par",btn_start:"Commencer gratuitement",
+k2:"L'artisanat est une histoire",body2:"Votre atelier n'est plus limite a votre quartier. Votre offre atteint des milliers de personnes. Sans intermediaire, sans commission.",
+sig1:"Connexion avec nom et telephone",sig1s:"- en secondes",sig2:"Offre visible 24h/24",sig2s:"- meme quand vous travaillez",sig3:"Le client vous appelle directement",sig3s:"- sans intermediaire",
+k3:"De l'offre a l'appel",j1t:"Publiez votre offre",j1d:"Titre, description et prix, visibles immediatement",j2t:"Collectez les avis",j2d:"Chaque client satisfait vous eleve",j3t:"Recevez les appels",j3d:"Le client prend votre numero et appelle",
+k4:"Les meilleurs en tete",body4:"L'artisan avec le plus d'avis cinq etoiles apparait en premier. Votre qualite vous eleve.",
+stat1:"Artisans inscrits",stat2:"Offres publiees",stat3:"Wilayas couvertes",footer_name:"Herfi Dzair",footer_by:"Realise par",
+l_sub:"Rejoignez des centaines d'artisans qui recoivent des appels chaque jour.",l_n1t:"Vos donnees en securite",l_n1d:"Nom et numero uniquement",l_n2t:"Acces immediat",l_n2d:"Sans email ni code",l_n3t:"Gratuit pour toujours",l_n3d:"Aucun frais cache",
+l_welcome:"Bienvenue",l_enterinfo:"Entrez vos informations",l_name:"Nom complet",l_phone:"Numero de telephone",btn_enter:"Entrer",l_note:"Votre nom et numero seront affiches avec vos offres uniquement - c'est le numero que les clients appelleront",l_back:"Retour a l'accueil",
+brand1:"Herfi",brand2:"Dzair",add_offer:"Ajouter",side_title:"Tous les metiers",logout:"Sortir",mine_only:"Mes offres",
+p_back:"Retour aux offres",p_rating:"NOTE",p_offer:"OFFRE",p_price:"PRIX",p_about:"A PROPOS",p_phone:"TEL",p_get:"Obtenir le numero",p_call:"Appeler",p_rate:"NOTER",p_send:"Envoyer la note",p_raters:"NOTE PAR",
+m_title:"Publier votre offre",m_publish:"Publier",m_cancel:"Annuler",
+ph_name:"Ecrivez votre nom",ph_phone:"Ecrivez votre numero",search_ph:"Chercher un service, un artisan...",m_ph_title:"Titre de l'offre",m_ph_desc:"Decrivez votre service...",m_ph_price:"Prix (ex: 5000 DA)",
+ctx_add:"Ajouter une offre",ctx_search:"Recherche",ctx_logout:"Deconnexion",
+loginH2:'A une etape de<br><span>nouveaux clients</span>',
+all_offers:"Toutes les offres",my_offers:"Mes offres",results:"Resultats",cat_p:"Section",offers_count:"offres - mieux notees en premier",no_offers:"Aucune offre.<br>Essayez une autre recherche.",
+no_rating:"Sans note",craft_p:"Metier",no_rate_yet:"Pas encore de notes - soyez le premier",of5:"sur 5",ratings_w:"notes",five_w:"cinq etoiles",no_reviews:"Pas encore de notes",you:"(vous)",
+choose_cat:"Choisir la section...",err_name:"Nom valide requis (3 lettres min)",err_phone:"Numero algerien valide requis (05/06/07)",fill_all:"Remplissez tous les champs",
+del_c:"Supprimer cette offre?",deleted:"Offre supprimee",published:"Offre publiee",welcome:"Bienvenue ",thanks:"Merci, votre note de ",stars_w:" etoiles est enregistree",pick:"Choisissez les etoiles",
+already:"Vous avez deja note cet artisan - une note par personne",selfr:"Vous ne pouvez pas vous noter",bye:"Deconnecte",
+now:"maintenant",ago_m:"il y a # min",ago_h:"il y a # h",ago_d:"il y a # j",old:"ancien",
+twTitle:[{t:"Bienvenue sur"},{br:1},{t:"Herfi Dzair",c:"gold"}],twSub:"La ou l'artisanat rencontre ses gens. Des artisans de toutes les wilayas presentent leurs services.",
+twS2:"Votre travail merite d'aller plus loin",twS3:"Trois etapes et le telephone sonne",twS4:"Votre qualite vous eleve"}
+};
+let LANG=localStorage.getItem("herfi_lang")||"ar";
+function T(k){return DICT[LANG][k]||DICT.ar[k]||k;}
+const CATEGORIES=[
+{n:"الكل",i:"grid",en:"All",fr:"Tout"},{n:"نجارة",i:"wood",en:"Carpentry",fr:"Menuiserie"},
+{n:"كهرباء",i:"bolt",en:"Electricity",fr:"Electricite"},{n:"سباكة",i:"drop",en:"Plumbing",fr:"Plomberie"},
+{n:"بناء",i:"brick",en:"Construction",fr:"Construction"},{n:"خياطة",i:"scissors",en:"Sewing",fr:"Couture"},
+{n:"حدادة",i:"hammer",en:"Blacksmith",fr:"Forge"},{n:"دهان",i:"roller",en:"Painting",fr:"Peinture"},
+{n:"تصليح هواتف",i:"mobile",en:"Phone repair",fr:"Reparation tel"},{n:"تبريد وتكييف",i:"snow",en:"Cooling & AC",fr:"Climatisation"},
+{n:"ميكانيك سيارات",i:"car",en:"Car mechanic",fr:"Mecanique auto"}];
+function catLabel(n){const c=CATEGORIES.find(x=>x.n===n);if(!c)return n;return LANG==="ar"?c.n:(c[LANG]||c.n);}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.documentElement.dir=(LANG==="ar")?"rtl":"ltr";
+  document.querySelectorAll("[data-i]").forEach(el=>el.textContent=T(el.dataset.i));
+  document.querySelectorAll("[data-ph]").forEach(el=>el.placeholder=T(el.dataset.ph));
+  document.getElementById("loginH2").innerHTML=T("loginH2");
+  document.querySelectorAll(".lang-item").forEach(li=>li.classList.toggle("active",li.dataset.lang===LANG));
+}
+function setLang(l){
+  LANG=l;localStorage.setItem("herfi_lang",l);applyLang();
+  document.getElementById("langMenu").classList.remove("open");
+  ["twTitle","twSub","twS2","twS3","twS4"].forEach(id=>{const el=document.getElementById(id);delete el.dataset.typed;el.innerHTML="";clearTimeout(timers[id]);});
+  if(document.getElementById("landingPage").classList.contains("active"))activateSec(fpIdx,true);
+  if(document.getElementById("appPage").classList.contains("active")){renderSidebar();renderOffers();}
+}
+function toggleLangMenu(e){e.stopPropagation();document.getElementById("langMenu").classList.toggle("open");}
+document.addEventListener("click",()=>{document.getElementById("langMenu").classList.remove("open");hideCtx();});
+
+/* ================= قائمة الكليك يمين ================= */
+const ctxEl=document.getElementById("ctxMenu");
+document.addEventListener("contextmenu",e=>{
+  e.preventDefault();
+  const w=200,h=160;
+  let x=e.clientX,y=e.clientY;
+  if(x+w>innerWidth)x=innerWidth-w-10;
+  if(y+h>innerHeight)y=innerHeight-h-10;
+  ctxEl.style.left=x+"px";ctxEl.style.top=y+"px";
+  ctxEl.classList.add("open");
+});
+function hideCtx(){ctxEl.classList.remove("open");}
+window.addEventListener("scroll",hideCtx,true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hideCtx();});
+function ctxAdd(){hideCtx();if(user){if(!document.getElementById("appPage").classList.contains("active"))enterApp();openModal();}else goLogin();}
+function ctxSearch(){hideCtx();if(user){if(!document.getElementById("appPage").classList.contains("active"))enterApp();document.getElementById("searchInput").focus();}else goLogin();}
+function ctxLogout(){hideCtx();if(user){logout();toast(T("bye"));}else showPage("landingPage");}
+
+/* ================= رسومات الأدوات العشوائية في خلفية الدخول ================= */
+const SKETCHES=[
+{v:"0 0 100 100",p:'<path pathLength="1" style="--d:0s" d="M25 85 L60 50"/><path pathLength="1" style="--d:.3s" d="M52 42 l20 -13 13 14 -17 15z"/>'},
+{v:"0 0 100 100",p:'<path pathLength="1" style="--d:0s" d="M25 85 L55 55"/><path pathLength="1" style="--d:.3s" d="M48 45 a14 14 0 1 1 16 16 l8 8 -10 10 -8 -8 a14 14 0 0 1 -6 -26z"/>'},
+{v:"0 0 120 80",p:'<path pathLength="1" style="--d:0s" d="M10 25 L95 25 L20 60 Z"/><path pathLength="1" style="--d:.4s" d="M95 25 h12 a9 9 0 0 1 0 18 h-8 l-5 -8"/>'},
+{v:"0 0 100 100",p:'<path pathLength="1" style="--d:0s" d="M30 88 L52 58"/><path pathLength="1" style="--d:.3s" d="M48 52 l13 -11 11 13 -13 11z"/><path pathLength="1" style="--d:.6s" d="M68 40 l13 -16 M75 48 l16 -13 M80 56 l18 -8"/>'},
+{v:"0 0 130 60",p:'<rect pathLength="1" style="--d:0s" x="8" y="18" width="112" height="24" rx="4"/><path pathLength="1" style="--d:.4s" d="M24 18 v10 M40 18 v16 M56 18 v10 M72 18 v16 M88 18 v10 M104 18 v16"/>'},
+{v:"0 0 100 100",p:'<path pathLength="1" style="--d:0s" d="M30 90 L58 55"/><path pathLength="1" style="--d:.3s" d="M56 50 l8 -10 10 8 -8 10z"/><path pathLength="1" style="--d:.5s" d="M70 38 L84 20 l6 5 -14 18"/>'},
+{v:"0 0 100 100",p:'<circle pathLength="1" style="--d:0s" cx="35" cy="35" r="9"/><circle pathLength="1" style="--d:.2s" cx="35" cy="72" r="9"/><path pathLength="1" style="--d:.4s" d="M42 42 L85 85 M42 65 L85 22"/>'},
+{v:"0 0 110 90",p:'<rect pathLength="1" style="--d:0s" x="12" y="15" width="52" height="22" rx="4"/><path pathLength="1" style="--d:.3s" d="M64 22 h22 v18 h-32 v14"/><rect pathLength="1" style="--d:.6s" x="48" y="54" width="9" height="28"/>'},
+{v:"0 0 110 80",p:'<path pathLength="1" style="--d:0s" d="M15 60 L60 15 L95 50"/><path pathLength="1" style="--d:.3s" d="M28 60 h55 M35 60 v12 h40 v-12"/><path pathLength="1" style="--d:.6s" d="M52 72 v-8 h12 v8"/>'}
+];
+let sketchTimer=null;
+function spawnSketch(){
+  if(!document.getElementById("loginPage").classList.contains("active"))return;
+  const layer=document.getElementById("sketchLayer");
+  if(layer.children.length>4)return;
+  const sk=SKETCHES[Math.floor(Math.random()*SKETCHES.length)];
+  const d=document.createElement("div");
+  d.className="sketch";
+  const size=90+Math.random()*130;
+  d.style.width=size+"px";
+  d.style.left=(4+Math.random()*76)+"%";
+  d.style.top=(4+Math.random()*76)+"%";
+  d.style.setProperty("--rot",(Math.random()*44-22)+"deg");
+  const life=5+Math.random()*2.5;
+  d.style.setProperty("--life",life+"s");
+  d.innerHTML=`<svg width="100%" viewBox="${sk.v}">${sk.p}</svg>`;
+  layer.appendChild(d);
+  setTimeout(()=>d.remove(),life*1000+200);
+}
+function startSketches(){
+  clearInterval(sketchTimer);
+  document.getElementById("sketchLayer").innerHTML="";
+  spawnSketch();setTimeout(spawnSketch,700);
+  sketchTimer=setInterval(spawnSketch,1500);
+}
+
+/* ================= محرك الكتابة ================= */
+const timers={};
+function typeSeg(elId,segments,speed=45,startDelay=0){
+  const el=document.getElementById(elId);
+  if(!el||el.dataset.typed)return;
+  el.dataset.typed="1";clearTimeout(timers[elId]);el.innerHTML="";
+  const caret=document.createElement("span");caret.className="caret";el.appendChild(caret);
+  let si=0,ci=0,cur=null;
+  function step(){
+    if(si>=segments.length){caret.remove();return;}
+    const seg=segments[si];
+    if(seg.br){el.insertBefore(document.createElement("br"),caret);si++;ci=0;cur=null;timers[elId]=setTimeout(step,speed);return;}
+    if(!cur){cur=document.createElement("span");if(seg.c)cur.className=seg.c;el.insertBefore(cur,caret);}
+    if(ci<seg.t.length){cur.textContent+=seg.t[ci++];timers[elId]=setTimeout(step,speed);}
+    else{si++;ci=0;cur=null;timers[elId]=setTimeout(step,speed);}
+  }
+  timers[elId]=setTimeout(step,startDelay);
+}
+function secTexts(i){
+  if(i===0)return[["twTitle",T("twTitle"),60,500],["twSub",[{t:T("twSub")}],24,2100]];
+  if(i===1)return[["twS2",[{t:T("twS2")}],50,300]];
+  if(i===2)return[["twS3",[{t:T("twS3")}],50,300]];
+  if(i===3)return[["twS4",[{t:T("twS4")}],50,300]];
+  return[];
+}
+
+/* ================= السكرول بالمقاطع ================= */
+const fpSecs=[...document.querySelectorAll(".fp")];
+let fpIdx=0,fpLock=false;
+function activateSec(i,force){
+  fpSecs.forEach((s,k)=>{
+    if(k===i){s.classList.remove("out");s.classList.add("in");}
+    else if(s.classList.contains("in")){s.classList.remove("in");s.classList.add("out");setTimeout(()=>s.classList.remove("out"),1200);}
+  });
+  secTexts(i).forEach(([id,seg,sp,d])=>{if(force){const el=document.getElementById(id);delete el.dataset.typed;}typeSeg(id,seg,sp,d);});
+  fpSecs[i].querySelectorAll("[data-count]").forEach(runCounter);
+}
+function fpGo(i){
+  i=Math.max(0,Math.min(fpSecs.length-1,i));
+  if(fpLock||i===fpIdx)return;
+  fpIdx=i;fpLock=true;
+  fpSecs[i].scrollIntoView({behavior:"smooth"});
+  activateSec(i);
+  setTimeout(()=>fpLock=false,1150);
+}
+window.addEventListener("wheel",e=>{
+  if(!document.getElementById("landingPage").classList.contains("active"))return;
+  e.preventDefault();if(fpLock)return;
+  fpGo(fpIdx+(e.deltaY>0?1:-1));
+},{passive:false});
+let tY=0;
+window.addEventListener("touchstart",e=>tY=e.touches[0].clientY,{passive:true});
+window.addEventListener("touchend",e=>{
+  if(!document.getElementById("landingPage").classList.contains("active"))return;
+  const d=tY-e.changedTouches[0].clientY;
+  if(Math.abs(d)>50)fpGo(fpIdx+(d>0?1:-1));
+},{passive:true});
+
+function runCounter(el){
+  if(el.dataset.done)return;el.dataset.done="1";
+  const t=+el.dataset.count,dur=1800,st=performance.now();
+  (function step(now){const p=Math.min((now-st)/dur,1);el.textContent=Math.round(t*(1-Math.pow(1-p,3))).toLocaleString(LANG==="ar"?"ar-DZ":"fr-FR");if(p<1)requestAnimationFrame(step);})(st);
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2600);}
+
+/* ================= البيانات ================= */
+const AC=["#0f766e","#7c3aed","#b91c1c","#b45309","#1d4ed8","#be185d","#047857"];
+let currentCat="الكل",mineOnly=false,selectedStars=0,currentProfile=null;
+let user=JSON.parse(localStorage.getItem("herfi_user")||"null");
+if(!localStorage.getItem("herfi_offers")){
+  const n=Date.now();
+  localStorage.setItem("herfi_offers",JSON.stringify([
+    {title:"تركيب مطابخ خشبية عصرية",cat:"نجارة",desc:"نجار محترف بخبرة 12 سنة في تصميم وتركيب المطابخ العصرية والكلاسيكية. أشتغل بخشب عالي الجودة وأعطي ضمان سنة كاملة على كل تركيباتي.",price:"حسب الاتفاق",owner:"محمد بن علي",phone:"0550123456",ts:n-259200000},
+    {title:"إصلاح الأعطاب الكهربائية",cat:"كهرباء",desc:"كهربائي معتمد، تدخل سريع في نفس اليوم لكل الأعطاب المنزلية والصناعية. ألتزم بمعايير السلامة. العاصمة وضواحيها.",price:"1500 دج للتنقل",owner:"يوسف حمادي",phone:"0661234567",ts:n-172800000},
+    {title:"كشف وتصليح تسربات المياه",cat:"سباكة",desc:"سبّاك متخصص في كشف التسربات بأجهزة حرارية حديثة بدون تكسير، مع إصلاح فوري وضمان على الخدمة.",price:"3000 دج",owner:"عمر شريف",phone:"0770987654",ts:n-86400000},
+    {title:"خياطة ملابس تقليدية",cat:"خياطة",desc:"خيّاطة محترفة في اللباس التقليدي الجزائري: قندورة وبرنوس وكاراكو بلمسة عصرية. أقمشة راقية وتسليم خلال أسبوع.",price:"من 8000 دج",owner:"فاطمة زهراء",phone:"0555678901",ts:n-43200000},
+    {title:"تغيير شاشات الهواتف",cat:"تصليح هواتف",desc:"تقني صيانة بخبرة 8 سنوات. شاشات أصلية لجميع الأنواع مع ضمان 3 أشهر. الخدمة في 30 دقيقة وأنت تستنى.",price:"من 4500 دج",owner:"كريم بوعلام",phone:"0699887766",ts:n-7200000},
+    {title:"دهان وديكورات داخلية",cat:"دهان",desc:"دهّان محترف في الدهان العصري وورق الجدران وديكورات الجبس. أسعار تنافسية ومعاينة مجانية قبل الأشغال.",price:"حسب المساحة",owner:"سفيان مرابط",phone:"0541223344",ts:n-3600000}
+  ]));
+}
+if(!localStorage.getItem("herfi_ratings")){
+  localStorage.setItem("herfi_ratings",JSON.stringify({
+    "0550123456":[{rater:"سمير قادري",raterPhone:"0666000001",stars:5,ts:Date.now()-172800000},{rater:"ليلى مباركي",raterPhone:"0555000002",stars:5,ts:Date.now()-86400000}],
+    "0770987654":[{rater:"رشيد عمراني",raterPhone:"0777000003",stars:4,ts:Date.now()-43200000}]
+  }));
+}
+function getRatings(){return JSON.parse(localStorage.getItem("herfi_ratings")||"{}");}
+function ratingStats(p){const l=getRatings()[p]||[];const n=l.length;const avg=n?l.reduce((s,r)=>s+r.stars,0)/n:0;const five=l.filter(r=>r.stars===5).length;return{n,avg,five,list:l};}
+function hasRated(p){return user&&(getRatings()[p]||[]).some(r=>r.raterPhone===user.phone);}
+function timeAgo(ts){if(!ts)return T("old");const d=Date.now()-ts,m=d/60000|0,h=d/3600000|0,dy=d/86400000|0;if(m<1)return T("now");if(m<60)return T("ago_m").replace("#",m);if(h<24)return T("ago_h").replace("#",h);return T("ago_d").replace("#",dy);}
+function avatarColor(nm){let h=0;for(const c of nm)h=(h*31+c.charCodeAt(0))>>>0;return AC[h%AC.length];}
+
+/* ================= التنقل ================= */
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  clearInterval(sketchTimer);
+  if(id==="landingPage"){fpIdx=0;activateSec(0);}
+  if(id==="loginPage")startSketches();
+}
+function goLogin(){
+  showPage("loginPage");
+  const b=document.getElementById("loginBrand");
+  b.classList.remove("in");void b.offsetWidth;b.classList.add("in");
+}
+function login(){
+  const name=document.getElementById("nameInput").value.trim();
+  const phone=document.getElementById("phoneInput").value.trim();
+  const err=document.getElementById("loginError");
+  if(name.length<3){err.textContent=T("err_name");err.style.display="block";return;}
+  if(!/^0[567]\d{8}$/.test(phone)){err.textContent=T("err_phone");err.style.display="block";return;}
+  err.style.display="none";
+  user={name,phone};
+  localStorage.setItem("herfi_user",JSON.stringify(user));
+  enterApp();toast(T("welcome")+name);
+}
+function logout(){localStorage.removeItem("herfi_user");user=null;showPage("landingPage");}
+function enterApp(){
+  document.getElementById("spName").textContent=user.name;
+  document.getElementById("spPhone").textContent=user.phone;
+  document.getElementById("spAvatar").textContent=user.name.charAt(0);
+  showPage("appPage");renderSidebar();renderOffers();
+}
+
+/* ================= السايدبار + العروض ================= */
+function offerCount(c){const a=JSON.parse(localStorage.getItem("herfi_offers")||"[]");return c==="الكل"?a.length:a.filter(o=>o.cat===c).length;}
+function renderSidebar(){
+  const box=document.getElementById("sideCats");box.innerHTML="";
+  CATEGORIES.forEach(c=>{
+    const d=document.createElement("div");
+    d.className="side-cat"+(c.n===currentCat?" active":"");
+    d.innerHTML=`<span class="right">${ic(c.i,16)} ${catLabel(c.n)}</span><span class="count">${offerCount(c.n)}</span>`;
+    d.onclick=()=>{currentCat=c.n;renderSidebar();renderOffers();};
+    box.appendChild(d);
+  });
+  const sel=document.getElementById("offerCat");
+  sel.innerHTML=`<option value="">${T("choose_cat")}</option>`;
+  CATEGORIES.slice(1).forEach(c=>{const o=document.createElement("option");o.value=c.n;o.textContent=catLabel(c.n);sel.appendChild(o);});
+}
+function toggleMine(){mineOnly=!mineOnly;document.getElementById("mineChip").classList.toggle("on",mineOnly);renderOffers();}
+function renderOffers(){
+  const grid=document.getElementById("offersGrid");
+  const q=(document.getElementById("searchInput").value||"").trim();
+  let offers=JSON.parse(localStorage.getItem("herfi_offers")||"[]");
+  offers.forEach((o,i)=>o._idx=i);
+  if(currentCat!=="الكل")offers=offers.filter(o=>o.cat===currentCat);
+  if(mineOnly&&user)offers=offers.filter(o=>o.phone===user.phone);
+  if(q)offers=offers.filter(o=>o.title.includes(q)||o.desc.includes(q)||o.owner.includes(q)||o.cat.includes(q));
+  document.getElementById("contentTitle").textContent=q?(T("results")+': "'+q+'"'):(mineOnly?T("my_offers"):(currentCat==="الكل"?T("all_offers"):T("cat_p")+" "+catLabel(currentCat)));
+  document.getElementById("contentSub").textContent=offers.length+" "+T("offers_count");
+  grid.innerHTML="";
+  if(!offers.length){grid.innerHTML=`<div class="empty-state">${T("no_offers")}</div>`;return;}
+  offers.sort((a,b)=>{const ra=ratingStats(a.phone),rb=ratingStats(b.phone);if(rb.five!==ra.five)return rb.five-ra.five;if(rb.avg!==ra.avg)return rb.avg-ra.avg;return(b.ts||0)-(a.ts||0);});
+  offers.forEach((o,i)=>{
+    const mine=user&&o.phone===user.phone,st=ratingStats(o.phone);
+    const card=document.createElement("div");
+    card.className="offer-card";card.style.animationDelay=(i*0.06)+"s";
+    const rate=st.n?`<span class="card-rate">${ic("star",12,true)} ${st.avg.toFixed(1)} (${st.n})</span>`:`<span class="card-rate" style="color:#5c5c66">${T("no_rating")}</span>`;
+    card.innerHTML=`<span class="cat-tag"></span>
+      <div class="card-top"><div class="card-avatar"></div><div class="who"><b></b>${rate}</div></div>
+      <h3></h3><p class="desc"></p>
+      <div class="meta"><span class="price"></span><span class="ago"></span></div>
+      <div class="card-actions"><button class="btn-getnum">${ic("phone",15)} ${T("p_get")}</button>${mine?`<button class="btn-del">${ic("trash",15)}</button>`:""}</div>`;
+    card.querySelector(".cat-tag").textContent=catLabel(o.cat);
+    const av=card.querySelector(".card-avatar");av.textContent=o.owner.charAt(0);av.style.background=avatarColor(o.owner);
+    card.querySelector(".who b").textContent=o.owner+(mine?" "+T("you"):"");
+    card.querySelector("h3").textContent=o.title;
+    card.querySelector(".desc").textContent=o.desc.length>100?o.desc.slice(0,100)+"...":o.desc;
+    card.querySelector(".price").textContent=o.price;
+    card.querySelector(".ago").textContent=timeAgo(o.ts);
+    card.onclick=()=>openProfile(o);
+    card.querySelector(".btn-getnum").onclick=e=>{e.stopPropagation();openProfile(o);};
+    if(mine)card.querySelector(".btn-del").onclick=e=>{e.stopPropagation();deleteOffer(o._idx);};
+    grid.appendChild(card);
+  });
+}
+function deleteOffer(idx){
+  if(!confirm(T("del_c")))return;
+  const o=JSON.parse(localStorage.getItem("herfi_offers")||"[]");
+  o.splice(idx,1);localStorage.setItem("herfi_offers",JSON.stringify(o));
+  renderSidebar();renderOffers();toast(T("deleted"));
+}
+
+/* ================= البروفايل + تقييم واحد ================= */
+function starsHtml(v,size=16){let h="";for(let i=1;i<=5;i++)h+=`<span data-on="${i<=Math.round(v)}">${ic("star",size,true)}</span>`;return h;}
+function paintStars(c){c.querySelectorAll("span[data-on]").forEach(sp=>{if(sp.dataset.on==="true")sp.firstChild.classList.add("on");});}
+function openProfile(o){
+  currentProfile=o;selectedStars=0;
+  ["docName","docDesc"].forEach(id=>{const el=document.getElementById(id);delete el.dataset.typed;el.innerHTML="";clearTimeout(timers[id]);});
+  document.getElementById("docCraft").textContent=T("craft_p")+": "+catLabel(o.cat);
+  document.getElementById("docOfferTitle").textContent=o.title;
+  document.getElementById("docPrice").textContent=o.price;
+  refreshDocRating();
+  document.getElementById("revealBtn").style.display="inline-flex";
+  document.getElementById("theNumber").classList.remove("show");
+  document.getElementById("callLink").classList.remove("show");
+  const self=user&&user.phone===o.phone;
+  const rated=hasRated(o.phone);
+  const note=document.getElementById("selfNote");
+  if(self){document.getElementById("rateZone").style.display="none";note.style.display="inline";note.textContent=T("selfr");}
+  else if(rated){document.getElementById("rateZone").style.display="none";note.style.display="inline";note.textContent=T("already");}
+  else{document.getElementById("rateZone").style.display="inline-flex";note.style.display="none";buildRateStars();}
+  renderReviews();
+  const ov=document.getElementById("profileOverlay");
+  ov.classList.add("open");ov.scrollTop=0;
+  typeSeg("docName",[{t:o.owner}],70,400);
+  typeSeg("docDesc",[{t:o.desc}],20,1200);
+}
+function closeProfile(){
+  document.getElementById("profileOverlay").classList.remove("open");
+  ["docName","docDesc"].forEach(id=>clearTimeout(timers[id]));
+  renderOffers();
+}
+function refreshDocRating(){
+  const st=ratingStats(currentProfile.phone);
+  const el=document.getElementById("docRating");
+  el.innerHTML=st.n?`<span class="doc-stars">${starsHtml(st.avg,17)}</span> ${st.avg.toFixed(1)} ${T("of5")} - ${st.n} ${T("ratings_w")} (${st.five} ${T("five_w")})`:T("no_rate_yet");
+  paintStars(el);
+}
+function revealNumber(){
+  document.getElementById("revealBtn").style.display="none";
+  const num=document.getElementById("theNumber");
+  const link=document.getElementById("callLink");
+  link.href="tel:"+currentProfile.phone;
+  num.classList.add("show");link.classList.add("show");
+  num.textContent="";let i=0;const p=currentProfile.phone;
+  (function step(){if(i<p.length){num.textContent+=p[i++];setTimeout(step,80);}})();
+}
+function buildRateStars(){
+  const w=document.getElementById("rateStars");w.innerHTML="";
+  for(let i=1;i<=5;i++){
+    const s=document.createElement("span");s.innerHTML=ic("star",28,true);
+    const svg=s.firstChild;
+    svg.onclick=()=>{selectedStars=i;[...w.children].forEach((c,k)=>{c.classList.remove("sel");void c.offsetWidth;if(k<i)c.classList.add("sel");});};
+    w.appendChild(svg);
+  }
+}
+function submitRating(){
+  if(!selectedStars){toast(T("pick"));return;}
+  if(hasRated(currentProfile.phone)){toast(T("already"));return;}
+  const r=getRatings(),l=r[currentProfile.phone]||[];
+  l.push({rater:user.name,raterPhone:user.phone,stars:selectedStars,ts:Date.now()});
+  r[currentProfile.phone]=l;
+  localStorage.setItem("herfi_ratings",JSON.stringify(r));
+  refreshDocRating();renderReviews();
+  document.getElementById("rateZone").style.display="none";
+  const note=document.getElementById("selfNote");
+  note.style.display="inline";note.textContent=T("already");
+  toast(T("thanks")+selectedStars+T("stars_w"));
+}
+function renderReviews(){
+  const box=document.getElementById("reviewsList");
+  const st=ratingStats(currentProfile.phone);box.innerHTML="";
+  if(!st.list.length){box.innerHTML=`<div class="no-reviews">${T("no_reviews")}</div>`;return;}
+  st.list.slice().sort((a,b)=>b.ts-a.ts).forEach((r,i)=>{
+    const it=document.createElement("div");
+    it.className="review-line";it.style.animationDelay=(i*0.12)+"s";
+    it.innerHTML=`<span class="rv-name"></span><span class="rv-stars">${starsHtml(r.stars,14)}</span><span class="rv-time"></span>`;
+    it.querySelector(".rv-name").textContent=r.rater;
+    it.querySelector(".rv-time").textContent=timeAgo(r.ts);
+    paintStars(it);box.appendChild(it);
+  });
+}
+
+/* ================= إضافة عرض ================= */
+function openModal(){document.getElementById("offerModal").classList.add("open");}
+function closeModal(){document.getElementById("offerModal").classList.remove("open");}
+function addOffer(){
+  const t=document.getElementById("offerTitle").value.trim();
+  const c=document.getElementById("offerCat").value;
+  const d=document.getElementById("offerDesc").value.trim();
+  const p=document.getElementById("offerPrice").value.trim()||"-";
+  const err=document.getElementById("offerError");
+  if(t.length<5||!c||d.length<10){err.textContent=T("fill_all");err.style.display="block";return;}
+  err.style.display="none";
+  const o=JSON.parse(localStorage.getItem("herfi_offers")||"[]");
+  o.push({title:t,cat:c,desc:d,price:p,owner:user.name,phone:user.phone,ts:Date.now()});
+  localStorage.setItem("herfi_offers",JSON.stringify(o));
+  ["offerTitle","offerDesc","offerPrice","offerCat"].forEach(id=>document.getElementById(id).value="");
+  closeModal();currentCat=c;mineOnly=false;
+  document.getElementById("mineChip").classList.remove("on");
+  renderSidebar();renderOffers();toast(T("published"));
+}
+
+/* ================= التشغيل ================= */
+applyLang();
+activateSec(0);
+if(user)enterApp();
+</script>
+</body>
+</html>
