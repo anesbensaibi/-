@@ -362,6 +362,658 @@ body.is-mobile .num-line { gap:14px; }
 body.is-mobile .review-line { flex-wrap:wrap; gap:10px; }
 body.is-mobile .rv-time { margin-right:0; width:100%; }
 body.is-mobile .modal { padding:28px 22px; }
+
+
+/* ============================================================
+   MOBILE FIX PATCH - Login + App responsive without relying only on body.is-mobile
+   ضع هذا الباتش في آخر <style> إذا كنت تعدل الملف يدويًا
+============================================================ */
+@media (max-width: 820px) {
+  html, body { width:100%; min-height:100%; overflow-x:hidden; }
+
+  /* تسجيل الدخول: يمنع التلاصق ويحول الصفحة إلى عمود واضح */
+  #loginPage.active {
+    display:block !important;
+    min-height:100dvh;
+    height:auto;
+    overflow-y:auto;
+    background:var(--ink);
+  }
+  .login-split {
+    display:flex !important;
+    flex-direction:column !important;
+    width:100%;
+    min-height:100dvh;
+  }
+  .login-brand {
+    flex:0 0 auto !important;
+    width:100% !important;
+    min-height:auto !important;
+    padding:28px 20px 22px !important;
+    border-left:none !important;
+    border-bottom:1px solid var(--line) !important;
+    align-items:center !important;
+    text-align:center !important;
+  }
+  .login-brand .mini-emblem {
+    width:72px !important;
+    margin-bottom:14px !important;
+  }
+  .login-brand h2 {
+    font-size:1.42rem !important;
+    line-height:1.65 !important;
+    max-width:330px;
+  }
+  .login-brand .brand-sub {
+    font-size:.86rem !important;
+    line-height:1.85 !important;
+    max-width:330px !important;
+    margin-top:8px !important;
+  }
+  .b-line-list {
+    width:100%;
+    max-width:360px;
+    margin-top:16px !important;
+  }
+  .b-line {
+    padding:9px 0 !important;
+    gap:10px !important;
+    text-align:right !important;
+    font-size:.84rem !important;
+  }
+  .b-line small { font-size:.72rem !important; }
+  .login-side {
+    flex:1 1 auto !important;
+    width:100% !important;
+    padding:22px 16px 34px !important;
+    align-items:flex-start !important;
+    overflow:visible !important;
+  }
+  .sketch-layer { display:none !important; }
+  .login-card {
+    width:100% !important;
+    max-width:420px !important;
+    margin:0 auto !important;
+    padding:28px 20px 24px !important;
+    border-radius:20px !important;
+    box-shadow:0 18px 50px rgba(0,0,0,.35) !important;
+  }
+  .login-card::before,
+  .login-card::after {
+    width:22px !important;
+    height:22px !important;
+  }
+  .login-card h3 {
+    font-size:1.28rem !important;
+    margin-bottom:4px !important;
+  }
+  .login-card .sub {
+    font-size:.84rem !important;
+    margin-bottom:20px !important;
+  }
+  .field { margin-bottom:17px !important; }
+  .field input {
+    font-size:1rem !important;
+    padding:11px 2px !important;
+  }
+  .btn-solid {
+    padding:13px !important;
+    border-radius:12px !important;
+    font-size:.96rem !important;
+  }
+  .login-note {
+    font-size:.72rem !important;
+    line-height:1.75 !important;
+    margin-top:14px !important;
+  }
+
+  /* الصفحة الأولى */
+  .top-nav {
+    padding:13px 14px !important;
+    gap:14px !important;
+    overflow-x:auto !important;
+    scrollbar-width:none;
+  }
+  .top-nav::-webkit-scrollbar { display:none; }
+  .nav-link { font-size:.82rem !important; white-space:nowrap; }
+  .lang-wrap { margin-right:auto !important; }
+  .lang-btn { width:38px !important; height:38px !important; }
+  .fp { min-height:100dvh; padding:22px 16px !important; }
+  h1.h-title { font-size:clamp(2.25rem, 12vw, 3.2rem) !important; }
+  .h-sub { font-size:.9rem !important; line-height:1.95 !important; padding:0 4px; }
+  .duo { gap:28px !important; }
+  .duo .copy { text-align:center !important; }
+  .copy .rule { justify-content:center !important; }
+  .j-labels { flex-direction:column !important; gap:18px !important; align-items:center !important; }
+  .j-label { width:100% !important; max-width:340px !important; }
+  .stats { gap:24px !important; }
+  .stat-box .num { font-size:2rem !important; }
+
+  /* التطبيق الداخلي */
+  #appPage.active { height:100dvh !important; }
+  header.app-header {
+    padding:11px 12px !important;
+    gap:9px !important;
+    align-items:center;
+  }
+  .app-header .logo { font-size:.98rem !important; }
+  .search-wrap {
+    order:3 !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    flex:1 1 100% !important;
+  }
+  .search-wrap input {
+    padding:10px 40px 10px 14px !important;
+    font-size:.88rem !important;
+  }
+  .btn-add {
+    margin-right:auto !important;
+    padding:10px 13px !important;
+    min-width:42px;
+    justify-content:center;
+  }
+  .btn-add .txt { display:none !important; }
+  .app-layout { flex-direction:column !important; min-height:0; }
+  aside.sidebar {
+    width:100% !important;
+    max-width:100% !important;
+    padding:9px 12px 0 !important;
+    border-right:none !important;
+    border-bottom:1px solid var(--line) !important;
+    flex:0 0 auto !important;
+  }
+  .sidebar h4 { display:none !important; }
+  .side-scroll {
+    display:flex !important;
+    gap:8px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding-bottom:9px !important;
+    scrollbar-width:none;
+  }
+  .side-scroll::-webkit-scrollbar { display:none; }
+  .side-cat {
+    flex:0 0 auto !important;
+    white-space:nowrap !important;
+    padding:9px 13px !important;
+    font-size:.82rem !important;
+    margin-bottom:0 !important;
+  }
+  .side-profile {
+    display:none !important;
+  }
+  main.content {
+    padding:15px 14px 50px !important;
+    overflow-y:auto !important;
+  }
+  .content-head { gap:8px !important; margin-bottom:14px !important; }
+  .content-title { font-size:1rem !important; }
+  .content-sub { font-size:.76rem !important; }
+  .chip-mine { padding:7px 13px !important; font-size:.78rem !important; }
+  .offers-grid {
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+  }
+  .offer-card {
+    padding:16px 14px !important;
+    border-radius:16px !important;
+  }
+  .card-top { gap:9px !important; margin-bottom:10px !important; }
+  .card-avatar { width:38px !important; height:38px !important; border-radius:12px !important; }
+  .offer-card h3 { font-size:.96rem !important; }
+  .offer-card .desc { font-size:.82rem !important; line-height:1.7 !important; }
+  .cat-tag { top:14px !important; left:14px !important; font-size:.66rem !important; padding:3px 10px !important; }
+
+  /* البروفايل والمودال */
+  .doc { padding:24px 16px 72px !important; }
+  .doc-row { flex-direction:column !important; gap:7px !important; padding:11px 0 !important; }
+  .doc-label { min-width:auto !important; }
+  .doc-name { font-size:2rem !important; }
+  .num-line { gap:12px !important; }
+  .review-line { flex-wrap:wrap !important; gap:8px !important; }
+  .rv-time { margin-right:0 !important; width:100%; }
+  .modal-overlay { align-items:flex-end !important; padding:0 !important; }
+  .modal {
+    max-width:100% !important;
+    border-radius:22px 22px 0 0 !important;
+    padding:24px 18px !important;
+    max-height:92dvh !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-brand { padding:24px 16px 18px !important; }
+  .login-brand .brand-sub { display:none; }
+  .b-line-list { display:none; }
+  .login-card { padding:24px 17px 22px !important; }
+  .top-nav { gap:10px !important; }
+  .nav-link { font-size:.78rem !important; }
+}
+
+
+
+/* ============================================================
+   LEGENDARY MOBILE APP PATCH — desktop unchanged
+   موبايل فقط: درج الحرف + بحث دائري يتمدد + لمس سلس
+============================================================ */
+.mobile-menu-dots,
+#mobileSidebarBackdrop{ display:none; }
+
+@media (max-width:820px){
+  /* الواجهة الأولى: النص العلوي يظهر طبيعي دائمًا */
+  .top-nav{ opacity:1 !important; visibility:visible !important; }
+  .top-nav .nav-link{ opacity:1 !important; transform:none !important; }
+
+  /* هيدر التطبيق على الهاتف فقط */
+  #appPage.active{ position:relative; }
+  header.app-header{
+    flex-wrap:nowrap !important;
+    min-height:64px !important;
+    padding:10px 12px !important;
+    gap:8px !important;
+    position:relative;
+    z-index:120;
+  }
+  .app-header .logo{
+    order:1 !important;
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .btn-add{
+    order:2 !important;
+    margin-right:0 !important;
+    flex:0 0 42px !important;
+    width:42px !important;
+    height:42px !important;
+    padding:0 !important;
+    border-radius:50% !important;
+    box-shadow:0 8px 22px rgba(232,176,56,.18);
+  }
+  .btn-add .txt{ display:none !important; }
+
+  /* زر الثلاث نقاط الذهبي */
+  .mobile-menu-dots{
+    order:4 !important;
+    display:inline-flex !important;
+    width:42px;
+    height:42px;
+    flex:0 0 42px;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    border:1px solid rgba(232,176,56,.45);
+    background:linear-gradient(180deg, rgba(232,176,56,.11), rgba(232,176,56,.035));
+    color:var(--gold);
+    border-radius:50%;
+    cursor:pointer;
+    transition:transform .28s cubic-bezier(.16,1,.3,1), opacity .24s, border-color .24s, background .24s;
+    box-shadow:0 12px 28px rgba(0,0,0,.22);
+  }
+  .mobile-menu-dots span{
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 12px rgba(232,176,56,.45);
+    display:block;
+  }
+  .mobile-menu-dots:active{ transform:scale(.92); }
+  body.mobile-sidebar-open .mobile-menu-dots{
+    opacity:0;
+    pointer-events:none;
+    transform:translateX(-10px) scale(.86);
+  }
+
+  /* البحث: دائرة فقط ثم يتمدد */
+  .search-wrap{
+    order:3 !important;
+    flex:0 0 42px !important;
+    width:42px !important;
+    min-width:42px !important;
+    max-width:42px !important;
+    height:42px !important;
+    margin:0 !important;
+    transition:flex-basis .34s cubic-bezier(.16,1,.3,1), max-width .34s cubic-bezier(.16,1,.3,1), width .34s cubic-bezier(.16,1,.3,1);
+  }
+  .search-wrap input{
+    height:42px !important;
+    width:42px !important;
+    padding:0 !important;
+    border-radius:50px !important;
+    background:var(--ink3) !important;
+    border:1px solid var(--line) !important;
+    color:transparent !important;
+    caret-color:transparent !important;
+    pointer-events:none;
+    transition:width .34s cubic-bezier(.16,1,.3,1), padding .34s cubic-bezier(.16,1,.3,1), color .2s, border-color .2s;
+  }
+  .search-wrap input::placeholder{ color:transparent !important; }
+  .search-wrap .s-icon{
+    right:12px !important;
+    z-index:2;
+    color:var(--gold) !important;
+    cursor:pointer;
+    pointer-events:auto;
+  }
+  .search-wrap.open{
+    flex:1 1 230px !important;
+    width:auto !important;
+    min-width:150px !important;
+    max-width:min(58vw,280px) !important;
+  }
+  .search-wrap.open input{
+    width:100% !important;
+    padding:10px 40px 10px 14px !important;
+    color:var(--txt) !important;
+    caret-color:var(--gold) !important;
+    pointer-events:auto !important;
+    border-color:rgba(232,176,56,.72) !important;
+    box-shadow:0 0 0 3px rgba(232,176,56,.08);
+  }
+  .search-wrap.open input::placeholder{ color:#5c5c66 !important; }
+
+  /* درج الحرف: يظهر من أقصى اليسار بحواف دائرية */
+  #mobileSidebarBackdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:125;
+    background:rgba(5,5,7,.55);
+    backdrop-filter:blur(5px);
+    -webkit-backdrop-filter:blur(5px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .28s ease, visibility .28s ease;
+  }
+  body.mobile-sidebar-open #mobileSidebarBackdrop{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+  aside.sidebar{
+    position:fixed !important;
+    top:76px !important;
+    left:12px !important;
+    right:auto !important;
+    bottom:16px !important;
+    width:min(84vw,330px) !important;
+    max-width:330px !important;
+    height:auto !important;
+    z-index:140 !important;
+    padding:16px 14px 0 !important;
+    background:rgba(16,16,20,.96) !important;
+    border:1px solid rgba(232,176,56,.24) !important;
+    border-radius:26px !important;
+    box-shadow:0 28px 80px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.04) !important;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    transform:translateX(-118%) scale(.98) !important;
+    opacity:.6;
+    transition:transform .42s cubic-bezier(.16,1,.3,1), opacity .34s ease !important;
+    overflow:hidden;
+  }
+  body.mobile-sidebar-open aside.sidebar{
+    transform:translateX(0) scale(1) !important;
+    opacity:1;
+  }
+  aside.sidebar h4{
+    display:flex !important;
+    font-size:.88rem !important;
+    margin-bottom:12px !important;
+    padding:0 4px 12px !important;
+    border-bottom:1px solid rgba(232,176,56,.16) !important;
+  }
+  .side-scroll{
+    display:block !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    max-height:calc(100dvh - 210px) !important;
+    padding:0 0 10px !important;
+    scrollbar-width:thin;
+  }
+  .side-cat{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    width:100% !important;
+    white-space:normal !important;
+    padding:12px 12px !important;
+    margin-bottom:6px !important;
+    border-radius:16px !important;
+    font-size:.88rem !important;
+    background:rgba(255,255,255,.018);
+  }
+  .side-cat .right{
+    gap:10px !important;
+    min-width:0;
+  }
+  .side-cat .right svg{ color:var(--gold); }
+  .side-cat .count{
+    min-width:30px;
+    height:24px;
+    padding:0 8px;
+    border-radius:999px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(232,176,56,.08);
+    border:1px solid rgba(232,176,56,.18);
+    color:var(--gold2) !important;
+    font-size:.72rem !important;
+    font-weight:700;
+  }
+  .side-cat.active{
+    border-color:rgba(232,176,56,.62) !important;
+    background:linear-gradient(90deg, rgba(232,176,56,.13), rgba(232,176,56,.035)) !important;
+  }
+  .side-profile{
+    display:flex !important;
+    margin-top:auto;
+    padding:13px 4px 14px !important;
+    border-top:1px solid rgba(232,176,56,.16) !important;
+  }
+
+  /* محتوى العروض يتنفس أكثر على الهاتف */
+  .app-layout{ flex-direction:column !important; }
+  main.content{
+    padding:16px 14px 54px !important;
+  }
+  .content-head{
+    margin-bottom:14px !important;
+  }
+  .offers-grid{
+    gap:14px !important;
+  }
+  .offer-card{
+    border-radius:18px !important;
+    transform:translateY(8px);
+    animation:mobileCardIn .42s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes mobileCardIn{ to{ transform:translateY(0); opacity:1; } from{ opacity:.2; } }
+}
+
+@media (max-width:420px){
+  .search-wrap.open{ max-width:min(54vw,230px) !important; min-width:135px !important; }
+  header.app-header{ gap:7px !important; }
+  .app-header .logo{ font-size:.9rem !important; }
+}
+
+
+
+/* ============================================================
+   FINAL MOBILE PATCH — hamburger, full-height drawer, natural scroll, admin mode
+   هذا الجزء يلمس الهاتف فقط ويحافظ على تجربة الكمبيوتر
+============================================================ */
+@media (max-width:820px){
+  /* الواجهة الأولى على الهاتف: سكرول طبيعي مثل أي موقع، لا يقفز بين المقاطع */
+  #landingPage{ overflow:visible !important; }
+  #landingPage .fp{
+    min-height:auto !important;
+    padding:96px 18px 86px !important;
+    overflow:visible !important;
+  }
+  #landingPage .fp:first-of-type{ min-height:100dvh !important; padding-top:92px !important; }
+  #landingPage .fp.out .sec-inner{ opacity:1 !important; transform:none !important; filter:none !important; }
+  #landingPage .top-nav{ opacity:1 !important; visibility:visible !important; transform:none !important; z-index:220 !important; }
+  #landingPage .lang-wrap{ z-index:260 !important; }
+  #landingPage .lang-menu{ z-index:300 !important; }
+
+  /* زر القائمة في الهاتف: ثلاث خطوط ذهبية وليس نقاط */
+  .mobile-menu-dots{
+    order:4 !important;
+    display:inline-flex !important;
+    width:42px !important;
+    height:42px !important;
+    flex:0 0 42px !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    border:1px solid rgba(232,176,56,.48) !important;
+    background:linear-gradient(180deg,rgba(232,176,56,.10),rgba(232,176,56,.035)) !important;
+    color:var(--gold) !important;
+    border-radius:50% !important;
+    box-shadow:0 12px 28px rgba(0,0,0,.22) !important;
+    cursor:pointer !important;
+  }
+  .mobile-menu-dots span{
+    width:18px !important;
+    height:2px !important;
+    border-radius:2px !important;
+    background:var(--gold) !important;
+    display:block !important;
+    box-shadow:0 0 10px rgba(232,176,56,.45) !important;
+  }
+  body.mobile-sidebar-open .mobile-menu-dots{ opacity:1 !important; pointer-events:auto !important; transform:none !important; }
+
+  /* الخلفية عند فتح القائمة: لا ضباب ولا تشويش مفاجئ */
+  #mobileSidebarBackdrop{
+    display:block !important;
+    position:fixed !important;
+    inset:0 !important;
+    z-index:125 !important;
+    background:rgba(5,5,7,.18) !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    transition:opacity .22s ease, visibility .22s ease !important;
+  }
+  body.mobile-sidebar-open #mobileSidebarBackdrop{ opacity:1 !important; visibility:visible !important; pointer-events:auto !important; }
+
+  /* درج الحرف: من أعلى الشاشة إلى أسفلها، حوافه ناعمة من جهة الداخل */
+  aside.sidebar{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:auto !important;
+    bottom:0 !important;
+    width:min(88vw,380px) !important;
+    max-width:380px !important;
+    height:100dvh !important;
+    z-index:140 !important;
+    padding:24px 16px 0 !important;
+    background:rgba(16,16,20,.985) !important;
+    border:1px solid rgba(232,176,56,.22) !important;
+    border-left:none !important;
+    border-radius:0 30px 30px 0 !important;
+    box-shadow:18px 0 70px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.04) !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    transform:translateX(-105%) !important;
+    opacity:1 !important;
+    overflow:hidden !important;
+    transition:transform .36s cubic-bezier(.16,1,.3,1) !important;
+  }
+  body.mobile-sidebar-open aside.sidebar{ transform:translateX(0) !important; }
+  aside.sidebar h4{ padding:0 6px 14px !important; margin-bottom:12px !important; }
+  .side-scroll{ max-height:calc(100dvh - 138px) !important; overflow-y:auto !important; overflow-x:hidden !important; }
+  .side-profile{ padding-bottom:18px !important; }
+}
+
+/* وضع الأدمن: لوحة واحدة فقط لحذف الحرفيين */
+body.admin-mode .search-wrap,
+body.admin-mode .btn-add,
+body.admin-mode aside.sidebar,
+body.admin-mode #mobileMenuBtn,
+body.admin-mode #mineChip{ display:none !important; }
+body.admin-mode .app-layout{ display:block !important; }
+body.admin-mode main.content{ width:100% !important; max-width:980px !important; margin:0 auto !important; padding:28px 22px 80px !important; }
+.admin-panel{ animation:cardUp .45s ease both; }
+.admin-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:20px; }
+.admin-head h2{ color:var(--gold2); font-size:1.35rem; margin-bottom:6px; }
+.admin-head p{ color:var(--mut); line-height:1.9; font-size:.92rem; }
+.admin-list{ display:grid; gap:12px; }
+.admin-card{ display:flex; align-items:center; justify-content:space-between; gap:14px; background:var(--ink2); border:1px solid var(--line); border-radius:18px; padding:16px; }
+.admin-card .a-info{ min-width:0; }
+.admin-card b{ display:block; font-size:.98rem; color:var(--txt); margin-bottom:5px; }
+.admin-card small{ display:block; color:var(--mut); line-height:1.7; overflow:hidden; text-overflow:ellipsis; }
+.admin-delete{ flex:0 0 auto; border:1px solid rgba(229,72,77,.45); color:#ff8b90; background:rgba(229,72,77,.08); border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:700; }
+@media(max-width:620px){
+  .admin-card{ align-items:flex-start; flex-direction:column; }
+  .admin-delete{ width:100%; }
+}
+
+
+
+/* ============================================================
+   FIX: Mobile sidebar scroll + no blocking overlay + clean logout
+   يطبق على الهاتف فقط ولا يغير نسخة الكمبيوتر
+============================================================ */
+@media (max-width:820px){
+  body.mobile-sidebar-open{
+    overflow:auto !important;
+    position:static !important;
+    touch-action:auto !important;
+  }
+  body.mobile-sidebar-open #mobileSidebarBackdrop{
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    background:transparent !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  body.mobile-sidebar-open aside.sidebar{
+    top:0 !important;
+    bottom:0 !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
+    touch-action:pan-y !important;
+    overscroll-behavior:contain !important;
+  }
+  body.mobile-sidebar-open aside.sidebar .side-scroll{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    padding-bottom:16px !important;
+  }
+  body.mobile-sidebar-open aside.sidebar .side-profile{
+    flex:0 0 auto !important;
+    position:sticky !important;
+    bottom:0 !important;
+    z-index:2 !important;
+    background:linear-gradient(180deg, rgba(16,16,20,.88), rgba(16,16,20,.99) 42%) !important;
+  }
+  body.mobile-sidebar-open aside.sidebar h4{
+    flex:0 0 auto !important;
+  }
+}
+
 </style>
 </head>
 <!-- الجزء الثاني (HTML) يُلصق هنا -->
@@ -530,11 +1182,15 @@ body.is-mobile .modal { padding:28px 22px; }
   </div>
 </div>
 
+<!-- خلفية درج الحرف للهاتف فقط -->
+<div id="mobileSidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
 <!-- ==================== التطبيق ==================== -->
 <div id="appPage" class="page">
   <header class="app-header">
+    <button class="mobile-menu-dots" id="mobileMenuBtn" onclick="toggleMobileSidebar(event)" aria-label="فتح قائمة الحرف"><span></span><span></span><span></span></button>
     <div class="logo"><span id="ic-hlogo"></span> <span data-i="brand1">حرفي</span> <b data-i="brand2">دزاير</b></div>
-    <div class="search-wrap"><span class="s-icon" id="ic-search"></span><input type="text" id="searchInput" data-ph="search_ph" placeholder="ابحث عن خدمة، حرفي، أو عرض..." maxlength="60" oninput="renderOffers()"></div>
+    <div class="search-wrap" id="searchWrap"><span class="s-icon" id="ic-search" onclick="toggleMobileSearch(event)"></span><input type="text" id="searchInput" data-ph="search_ph" placeholder="ابحث عن خدمة، حرفي، أو عرض..." maxlength="60" onfocus="openMobileSearch()" oninput="renderOffers()"></div>
     <button class="btn-add" onclick="openModal()"><span id="ic-plus1"></span><span class="txt" data-i="add_offer">أضف عرضاً</span></button>
   </header>
   <div class="app-layout">
@@ -816,6 +1472,7 @@ function fpGo(i){
 }
 window.addEventListener("wheel",e=>{
   if(!document.getElementById("landingPage").classList.contains("active"))return;
+  if(isPhoneView()) return;
   e.preventDefault();if(fpLock)return;
   fpGo(fpIdx+(e.deltaY>0?1:-1));
 },{passive:false});
@@ -823,6 +1480,7 @@ let tY=0;
 window.addEventListener("touchstart",e=>tY=e.touches[0].clientY,{passive:true});
 window.addEventListener("touchend",e=>{
   if(!document.getElementById("landingPage").classList.contains("active"))return;
+  if(isPhoneView()) return;
   const d=tY-e.changedTouches[0].clientY;
   if(Math.abs(d)>50)fpGo(fpIdx+(d>0?1:-1));
 },{passive:true});
@@ -838,22 +1496,22 @@ function toast(m){const t=document.getElementById("toast");t.textContent=m;t.cla
 const AC=["#0f766e","#7c3aed","#b91c1c","#b45309","#1d4ed8","#be185d","#047857"];
 let currentCat="الكل",mineOnly=false,selectedStars=0,currentProfile=null;
 let user=JSON.parse(localStorage.getItem("herfi_user")||"null");
-if(!localStorage.getItem("herfi_offers")){
-  const n=Date.now();
-  localStorage.setItem("herfi_offers",JSON.stringify([
-    {title:"تركيب مطابخ خشبية عصرية",cat:"نجارة",desc:"نجار محترف بخبرة 12 سنة في تصميم وتركيب المطابخ العصرية والكلاسيكية. أشتغل بخشب عالي الجودة وأعطي ضمان سنة كاملة على كل تركيباتي.",price:"حسب الاتفاق",owner:"محمد بن علي",phone:"0550123456",ts:n-259200000},
-    {title:"إصلاح الأعطاب الكهربائية",cat:"كهرباء",desc:"كهربائي معتمد، تدخل سريع في نفس اليوم لكل الأعطاب المنزلية والصناعية. ألتزم بمعايير السلامة. العاصمة وضواحيها.",price:"1500 دج للتنقل",owner:"يوسف حمادي",phone:"0661234567",ts:n-172800000},
-    {title:"كشف وتصليح تسربات المياه",cat:"سباكة",desc:"سبّاك متخصص في كشف التسربات بأجهزة حرارية حديثة بدون تكسير، مع إصلاح فوري وضمان على الخدمة.",price:"3000 دج",owner:"عمر شريف",phone:"0770987654",ts:n-86400000},
-    {title:"خياطة ملابس تقليدية",cat:"خياطة",desc:"خيّاطة محترفة في اللباس التقليدي الجزائري: قندورة وبرنوس وكاراكو بلمسة عصرية. أقمشة راقية وتسليم خلال أسبوع.",price:"من 8000 دج",owner:"فاطمة زهراء",phone:"0555678901",ts:n-43200000},
-    {title:"تغيير شاشات الهواتف",cat:"تصليح هواتف",desc:"تقني صيانة بخبرة 8 سنوات. شاشات أصلية لجميع الأنواع مع ضمان 3 أشهر. الخدمة في 30 دقيقة وأنت تستنى.",price:"من 4500 دج",owner:"كريم بوعلام",phone:"0699887766",ts:n-7200000},
-    {title:"دهان وديكورات داخلية",cat:"دهان",desc:"دهّان محترف في الدهان العصري وورق الجدران وديكورات الجبس. أسعار تنافسية ومعاينة مجانية قبل الأشغال.",price:"حسب المساحة",owner:"سفيان مرابط",phone:"0541223344",ts:n-3600000}
-  ]));
-}
-if(!localStorage.getItem("herfi_ratings")){
-  localStorage.setItem("herfi_ratings",JSON.stringify({
-    "0550123456":[{rater:"سمير قادري",raterPhone:"0666000001",stars:5,ts:Date.now()-172800000},{rater:"ليلى مباركي",raterPhone:"0555000002",stars:5,ts:Date.now()-86400000}],
-    "0770987654":[{rater:"رشيد عمراني",raterPhone:"0777000003",stars:4,ts:Date.now()-43200000}]
-  }));
+const ORIGINAL_CONTENT_HTML=document.querySelector("main.content").innerHTML;
+
+/* لا توجد بيانات مزيفة في النسخة النهائية.
+   نحذف فقط بيانات التجربة القديمة إن وُجدت ونترك أي حرفي حقيقي أضاف نفسه. */
+const FINAL_DATA_VERSION="no_fake_admin_mobile_v1";
+const OLD_FAKE_PHONES=new Set(["0550123456","0661234567","0770987654","0555678901","0699887766","0541223344"]);
+if(!localStorage.getItem("herfi_offers")) localStorage.setItem("herfi_offers",JSON.stringify([]));
+if(!localStorage.getItem("herfi_ratings")) localStorage.setItem("herfi_ratings",JSON.stringify({}));
+if(localStorage.getItem("herfi_data_version")!==FINAL_DATA_VERSION){
+  const existingOffers=JSON.parse(localStorage.getItem("herfi_offers")||"[]").filter(o=>!OLD_FAKE_PHONES.has(o.phone));
+  const existingRatings=JSON.parse(localStorage.getItem("herfi_ratings")||"{}");
+  OLD_FAKE_PHONES.forEach(p=>delete existingRatings[p]);
+  localStorage.setItem("herfi_offers",JSON.stringify(existingOffers));
+  localStorage.setItem("herfi_ratings",JSON.stringify(existingRatings));
+  if(!localStorage.getItem("herfi_disabled_notices")) localStorage.setItem("herfi_disabled_notices",JSON.stringify({}));
+  localStorage.setItem("herfi_data_version",FINAL_DATA_VERSION);
 }
 function getRatings(){return JSON.parse(localStorage.getItem("herfi_ratings")||"{}");}
 function ratingStats(p){const l=getRatings()[p]||[];const n=l.length;const avg=n?l.reduce((s,r)=>s+r.stars,0)/n:0;const five=l.filter(r=>r.stars===5).length;return{n,avg,five,list:l};}
@@ -875,6 +1533,8 @@ function goLogin(){
   const b=document.getElementById("loginBrand");
   b.classList.remove("in");void b.offsetWidth;b.classList.add("in");
 }
+function normalizeName(v){return (v||"").trim().toLowerCase().replace(/\s+/g," ");}
+function isAdminUser(u){return u && u.phone==="0558917989" && normalizeName(u.name)==="anes bensaibi";}
 function login(){
   const name=document.getElementById("nameInput").value.trim();
   const phone=document.getElementById("phoneInput").value.trim();
@@ -882,16 +1542,88 @@ function login(){
   if(name.length<3){err.textContent=T("err_name");err.style.display="block";return;}
   if(!/^0[567]\d{8}$/.test(phone)){err.textContent=T("err_phone");err.style.display="block";return;}
   err.style.display="none";
-  user={name,phone};
+  user={name,phone,isAdmin:(phone==="0558917989" && normalizeName(name)==="anes bensaibi")};
   localStorage.setItem("herfi_user",JSON.stringify(user));
-  enterApp();toast(T("welcome")+name);
+  enterApp();
+  if(!user.isAdmin) showDisabledNotices();
+  toast(user.isAdmin?"مرحباً أنس، دخلت لوحة الإدارة":T("welcome")+name);
 }
-function logout(){localStorage.removeItem("herfi_user");user=null;showPage("landingPage");}
+function logout(){localStorage.removeItem("herfi_user");user=null;document.body.classList.remove("admin-mode");showPage("landingPage");}
 function enterApp(){
   document.getElementById("spName").textContent=user.name;
   document.getElementById("spPhone").textContent=user.phone;
   document.getElementById("spAvatar").textContent=user.name.charAt(0);
-  showPage("appPage");renderSidebar();renderOffers();
+  showPage("appPage");
+  if(isAdminUser(user) || user.isAdmin){
+    user.isAdmin=true;
+    document.body.classList.add("admin-mode");
+    renderAdminPanel();
+    return;
+  }
+  document.body.classList.remove("admin-mode");
+  const content=document.querySelector("main.content");
+  if(!document.getElementById("offersGrid")) content.innerHTML=ORIGINAL_CONTENT_HTML;
+  renderSidebar();renderOffers();
+}
+
+
+
+/* ================= لوحة أنس: حذف/تعطيل الحرفيين ================= */
+function getDisabledNotices(){return JSON.parse(localStorage.getItem("herfi_disabled_notices")||"{}");}
+function setDisabledNotices(v){localStorage.setItem("herfi_disabled_notices",JSON.stringify(v));}
+function showDisabledNotices(){
+  const all=getDisabledNotices();
+  const list=all[user.phone]||[];
+  if(!list.length) return;
+  toast(list[list.length-1].msg || "تم تعطيل طلبك بالحرفة بعد المراجعة.");
+}
+function renderAdminPanel(){
+  closeMobileSidebar();
+  closeMobileSearch(false);
+  const content=document.querySelector("main.content");
+  const offers=JSON.parse(localStorage.getItem("herfi_offers")||"[]");
+  const grouped={};
+  offers.forEach((o,i)=>{
+    if(!grouped[o.phone]) grouped[o.phone]={phone:o.phone,owner:o.owner,items:[]};
+    grouped[o.phone].items.push({...o,_idx:i});
+  });
+  const people=Object.values(grouped).sort((a,b)=>a.owner.localeCompare(b.owner,'ar'));
+  content.innerHTML=`<div class="admin-panel">
+    <div class="admin-head">
+      <div>
+        <h2>لوحة أنس</h2>
+        <p>هذه اللوحة تظهر لك وحدك عند الدخول بالاسم والرقم المخصصين. تستطيع تعطيل أي حرفي غير مناسب، وسيتم حذف عروضه من الصفحة.</p>
+      </div>
+      <button class="logout-link" onclick="logout()">خروج</button>
+    </div>
+    <div class="admin-list" id="adminList"></div>
+  </div>`;
+  const box=document.getElementById("adminList");
+  if(!people.length){box.innerHTML=`<div class="empty-state">لا يوجد أي حرفي مضاف حالياً. عندما يضيف الناس أنفسهم سيظهرون هنا للمراجعة.</div>`;return;}
+  people.forEach(p=>{
+    const div=document.createElement("div");
+    div.className="admin-card";
+    const crafts=[...new Set(p.items.map(x=>catLabel(x.cat)))].join("، ");
+    div.innerHTML=`<div class="a-info"><b></b><small></small><small></small></div><button class="admin-delete">تعطيل الحرفي</button>`;
+    div.querySelector("b").textContent=p.owner;
+    div.querySelectorAll("small")[0].textContent=p.phone+" - "+p.items.length+" عرض";
+    div.querySelectorAll("small")[1].textContent=crafts;
+    div.querySelector("button").onclick=()=>adminDisableCraftsman(p.phone,p.owner);
+    box.appendChild(div);
+  });
+}
+function adminDisableCraftsman(phone,owner){
+  if(!confirm("هل تريد تعطيل هذا الحرفي وحذف كل عروضه؟")) return;
+  const offers=JSON.parse(localStorage.getItem("herfi_offers")||"[]");
+  const removed=offers.filter(o=>o.phone===phone);
+  const keep=offers.filter(o=>o.phone!==phone);
+  localStorage.setItem("herfi_offers",JSON.stringify(keep));
+  const notices=getDisabledNotices();
+  notices[phone]=notices[phone]||[];
+  notices[phone].push({ts:Date.now(),msg:"تم تعطيل طلبك بالحرفة بعد مراجعة فريق أنس، لأن المعلومات لم تكن كافية أو لم تطابق شروط النشر."});
+  setDisabledNotices(notices);
+  toast("تم تعطيل "+owner+" وحذف "+removed.length+" عرض");
+  renderAdminPanel();
 }
 
 /* ================= السايدبار + العروض ================= */
@@ -902,7 +1634,7 @@ function renderSidebar(){
     const d=document.createElement("div");
     d.className="side-cat"+(c.n===currentCat?" active":"");
     d.innerHTML=`<span class="right">${ic(c.i,16)} ${catLabel(c.n)}</span><span class="count">${offerCount(c.n)}</span>`;
-    d.onclick=()=>{currentCat=c.n;renderSidebar();renderOffers();};
+    d.onclick=()=>{currentCat=c.n;renderSidebar();renderOffers();closeMobileSidebar();};
     box.appendChild(d);
   });
   const sel=document.getElementById("offerCat");
@@ -913,7 +1645,7 @@ function toggleMine(){mineOnly=!mineOnly;document.getElementById("mineChip").cla
 function renderOffers(){
   const grid=document.getElementById("offersGrid");
   const q=(document.getElementById("searchInput").value||"").trim();
-  let offers=JSON.parse(localStorage.getItem("herfi_offers")||"[]");
+  let offers=JSON.parse(localStorage.getItem("herfi_offers")||"[]").filter(o=>o && o.phone && o.owner);
   offers.forEach((o,i)=>o._idx=i);
   if(currentCat!=="الكل")offers=offers.filter(o=>o.cat===currentCat);
   if(mineOnly&&user)offers=offers.filter(o=>o.phone===user.phone);
@@ -1054,10 +1786,182 @@ function addOffer(){
   renderSidebar();renderOffers();toast(T("published"));
 }
 
+
+/* ================= تحسينات الهاتف: درج الحرف + البحث الدائري ================= */
+function isPhoneView(){return window.matchMedia('(max-width: 820px)').matches;}
+function openMobileSidebar(){
+  if(!isPhoneView()) return;
+  document.body.classList.add('mobile-sidebar-open');
+  closeMobileSearch(false);
+}
+function closeMobileSidebar(){
+  document.body.classList.remove('mobile-sidebar-open');
+}
+function toggleMobileSidebar(e){
+  if(e) e.stopPropagation();
+  if(!isPhoneView()) return;
+  document.body.classList.contains('mobile-sidebar-open') ? closeMobileSidebar() : openMobileSidebar();
+}
+function openMobileSearch(focus=true){
+  if(!isPhoneView()) return;
+  const w=document.getElementById('searchWrap');
+  const i=document.getElementById('searchInput');
+  if(!w||!i) return;
+  w.classList.add('open');
+  closeMobileSidebar();
+  if(focus) setTimeout(()=>i.focus(),180);
+}
+function closeMobileSearch(onlyIfEmpty=true){
+  const w=document.getElementById('searchWrap');
+  const i=document.getElementById('searchInput');
+  if(!w||!i) return;
+  if(!onlyIfEmpty || !i.value.trim()){
+    w.classList.remove('open');
+    if(!i.value.trim()) i.blur();
+  }
+}
+function toggleMobileSearch(e){
+  if(e) e.stopPropagation();
+  if(!isPhoneView()) return;
+  const w=document.getElementById('searchWrap');
+  if(!w) return;
+  if(w.classList.contains('open')){
+    const i=document.getElementById('searchInput');
+    if(i && i.value.trim()) i.focus(); else closeMobileSearch(false);
+  }else openMobileSearch(true);
+}
+document.addEventListener('click',function(e){
+  if(!isPhoneView()) return;
+  const sw=document.getElementById('searchWrap');
+  const sb=document.querySelector('aside.sidebar');
+  const mb=document.getElementById('mobileMenuBtn');
+  if(sw && !sw.contains(e.target)) closeMobileSearch(true);
+  if(document.body.classList.contains('mobile-sidebar-open') && sb && !sb.contains(e.target) && mb && !mb.contains(e.target)) closeMobileSidebar();
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    closeMobileSidebar();
+    closeMobileSearch(true);
+  }
+});
+window.addEventListener('resize',function(){
+  setupMobileLandingObserver();
+  if(!isPhoneView()){
+    closeMobileSidebar();
+    const w=document.getElementById('searchWrap');
+    if(w) w.classList.remove('open');
+  }
+},{passive:true});
+
+
+
+/* سكرول طبيعي للهاتف: المقاطع تظهر عند الوصول إليها بدون نقل إجباري */
+let mobileLandingObserver=null;
+function setupMobileLandingObserver(){
+  if(!isPhoneView() || mobileLandingObserver) return;
+  mobileLandingObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const i=fpSecs.indexOf(entry.target);
+        entry.target.classList.add("in");
+        secTexts(i).forEach(([id,seg,sp,d])=>typeSeg(id,seg,sp,d));
+        entry.target.querySelectorAll("[data-count]").forEach(runCounter);
+      }
+    });
+  },{threshold:.28});
+  fpSecs.forEach(sec=>mobileLandingObserver.observe(sec));
+}
+
 /* ================= التشغيل ================= */
 applyLang();
 activateSec(0);
+setupMobileLandingObserver();
 if(user)enterApp();
 </script>
+<script>
+
+/* MOBILE CLASS FIX - يضمن تفعيل كلاس الهاتف حتى لو المتصفح لا يعتمد hover بشكل صحيح */
+(function(){
+  function setMobileClass(){
+    var isMobile = window.matchMedia('(max-width: 820px)').matches || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    document.body.classList.toggle('is-mobile', isMobile);
+  }
+  setMobileClass();
+  window.addEventListener('resize', setMobileClass, {passive:true});
+  window.addEventListener('orientationchange', function(){ setTimeout(setMobileClass, 250); }, {passive:true});
+})();
+</script>
+
+<script>
+/* ============================================================
+   FIX: Mobile drawer can scroll normally + logout never leaves page blocked
+============================================================ */
+(function(){
+  function phone(){
+    return window.matchMedia && window.matchMedia('(max-width: 820px)').matches;
+  }
+  function cleanFloatingUI(){
+    document.body.classList.remove('mobile-sidebar-open');
+    var sw=document.getElementById('searchWrap');
+    if(sw) sw.classList.remove('open');
+    var profile=document.getElementById('profileOverlay');
+    if(profile) profile.classList.remove('open');
+    document.querySelectorAll('.modal-overlay.open').forEach(function(m){m.classList.remove('open');});
+    var ctx=document.getElementById('ctxMenu');
+    if(ctx) ctx.classList.remove('open');
+  }
+
+  window.closeMobileSidebar=function(){
+    document.body.classList.remove('mobile-sidebar-open');
+  };
+
+  window.openMobileSidebar=function(){
+    if(!phone()) return;
+    if(typeof closeMobileSearch==='function') closeMobileSearch(false);
+    document.body.classList.add('mobile-sidebar-open');
+    setTimeout(function(){
+      var list=document.querySelector('aside.sidebar .side-scroll');
+      if(list) list.scrollTop=0;
+    },80);
+  };
+
+  window.toggleMobileSidebar=function(e){
+    if(e) e.stopPropagation();
+    if(!phone()) return;
+    if(document.body.classList.contains('mobile-sidebar-open')){
+      window.closeMobileSidebar();
+    }else{
+      window.openMobileSidebar();
+    }
+  };
+
+  var oldShowPage=window.showPage;
+  window.showPage=function(id){
+    cleanFloatingUI();
+    if(typeof oldShowPage==='function') return oldShowPage(id);
+  };
+
+  window.logout=function(){
+    cleanFloatingUI();
+    localStorage.removeItem('herfi_user');
+    window.user=null;
+    document.body.classList.remove('admin-mode');
+    if(typeof window.showPage==='function') window.showPage('landingPage');
+  };
+
+  document.addEventListener('touchmove',function(e){
+    if(!phone() || !document.body.classList.contains('mobile-sidebar-open')) return;
+    var sidebar=document.querySelector('aside.sidebar');
+    if(sidebar && sidebar.contains(e.target)){
+      e.stopPropagation();
+    }
+  },{passive:true,capture:true});
+
+  window.addEventListener('resize',function(){
+    if(!phone()) cleanFloatingUI();
+  },{passive:true});
+})();
+</script>
+
 </body>
 </html>
